@@ -1,0 +1,55 @@
+<h2>LISTADO DE DOCUMENTOS RECIBIDOS</h2>
+
+<hr>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="FechaDocumento">
+        <th mat-header-cell *matHeaderCellDef> Fecha Documento </th>
+        <td mat-cell *matCellDef="let viewDocumento">{{viewDocumento.FechaDocumento}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="FechayHoraAutorizacion">
+        <th mat-header-cell *matHeaderCellDef> Fecha y Hora Autorización </th>
+        <td mat-cell *matCellDef="let viewDocumento"> {{viewDocumento.FechayHoraAutorizacion}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Emisor">
+        <th mat-header-cell *matHeaderCellDef> Emisor </th>
+        <td mat-cell *matCellDef="let viewDocumento"> {{viewDocumento.Emisor}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="TipoDocumento">
+        <th mat-header-cell *matHeaderCellDef> Tipo Documento </th>
+        <td mat-cell *matCellDef="let viewDocumento"> {{viewDocumento.TipoDocumento}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Documento">
+        <th mat-header-cell *matHeaderCellDef> No. Documento </th>
+        <td mat-cell *matCellDef="let viewDocumento"> {{viewDocumento.Documento}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="ClaveAcceso">
+        <th mat-header-cell *matHeaderCellDef> Clave de Acceso </th>
+        <td mat-cell *matCellDef="let viewDocumento"> {{viewDocumento.ClaveAcceso}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="funciones">
+        <th mat-header-cell *matHeaderCellDef> Funciones </th>
+        <td mat-cell *matCellDef="let viewDocumento">
+            <button mat-icon-button color="secondary">
+                <mat-icon aria-hidden="false" 
+                aria-label="Example home icon" 
+                fontIcon="picture_as_pdf"></mat-icon>
+            </button>
+            <button mat-icon-button color="warn">
+                <mat-icon aria-hidden="false" 
+                aria-label="Example home icon" 
+                fontIcon="integration_instructions"></mat-icon>
+            </button>
+        </td>
+    </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

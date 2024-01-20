@@ -1,0 +1,51 @@
+<div class="row">
+  <div class="col-xl-10">
+    <h2>ROLES</h2>
+  </div>
+  <div class="col-xl-2 text-end">
+    <button mat-raised-button color="primary" matTooltip="Nuevo">
+      <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
+      Nuevo
+    </button>
+    <div style="display: none;" *matCellDef="let viewEmpresa">
+      <!-- <app-edit-empresa-modal [IsNew]="isNew" [idEmpresa]="idEmpresa"
+      (empresaGuardada)="guardarUsuario($event)"></app-edit-empresa-modal> -->
+    </div>
+  </div>
+  <hr>
+</div>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="Nombre">
+    <th mat-header-cell *matHeaderCellDef> Nombre </th>
+    <td mat-cell *matCellDef="let viewRol"> {{viewRol.Nombre}} </td>
+  </ng-container>
+
+  <!-- Weight Column -->
+  <ng-container matColumnDef="Descripcion">
+    <th mat-header-cell *matHeaderCellDef> Descripción </th>
+    <td mat-cell *matCellDef="let viewRol"> {{viewRol.Descripcion}} </td>
+  </ng-container>
+
+  <!-- Symbol Column -->
+  <ng-container matColumnDef="Funciones">
+    <th mat-header-cell *matHeaderCellDef> Funciones </th>
+    <td mat-cell *matCellDef="let viewRol">
+      <button mat-mini-fab color="accent" matTooltip="Editar">
+        <mat-icon fontIcon="edit"></mat-icon>
+      </button>
+
+      <button mat-mini-fab color="warn" matTooltip="Deshabilitar">
+        <mat-icon fontIcon="delete"></mat-icon>
+      </button>
+
+
+
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

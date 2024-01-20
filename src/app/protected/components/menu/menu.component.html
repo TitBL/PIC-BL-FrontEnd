@@ -1,0 +1,105 @@
+<mat-sidenav-container color="primary" class="sidenav-container">
+  <mat-sidenav #drawer color="primary" class="sidenav p-1" fixedInViewport
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) === false">
+    <mat-toolbar color="primary">
+      <mat-icon>list</mat-icon> Menu
+    </mat-toolbar>
+
+
+    <mat-expansion-panel hideToggle class="mb-1">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon class="me-2">settings</mat-icon>
+          Configuraciones
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+        <a class="menuItem" mat-flat-button
+        href="{{PATH_Configuraciones.General.path}}">{{PATH_Configuraciones.General.name}}</a>
+        <a class="menuItem" mat-flat-button
+        href="{{PATH_Configuraciones.Empresa.path}}">{{PATH_Configuraciones.Empresa.name}}</a>
+        <a class="menuItem" mat-flat-button 
+        href="{{PATH_Configuraciones.Usuario.path}}">{{PATH_Configuraciones.Usuario.name}}</a>
+        <a class="menuItem" mat-flat-button 
+        href="{{PATH_Configuraciones.Roles.path}}">{{PATH_Configuraciones.Roles.name}}</a>
+        
+    </mat-expansion-panel>
+
+
+    <mat-expansion-panel hideToggle class="mb-1">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon class="me-2" fontIcon="folder_open"></mat-icon>
+          Mis Documentos
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <a class="menuItem" mat-flat-button href="{{PATH_MisDocumentos.Recibidos.path}}">{{PATH_MisDocumentos.Recibidos.name}}</a>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel hideToggle class="mb-1">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon class="me-2" fontIcon="file_copy"></mat-icon>
+          Documentos Empresa
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <a class="menuItem" mat-flat-button href="{{PATH_DocumentosEmpresa.Recibidos.path}}">{{PATH_DocumentosEmpresa.Recibidos.name}}</a>
+      <a class="menuItem" mat-flat-button href="{{PATH_DocumentosEmpresa.Emitidos.path}}">{{PATH_DocumentosEmpresa.Emitidos.name}}</a>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel hideToggle class="mb-1">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon class="me-2" fontIcon="print_connect"></mat-icon>
+          Reportes
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <a class="menuItem" mat-flat-button href="/historial">Emitidos1</a>
+      <a class="menuItem" mat-flat-button href="/cita">Emitidos2</a>
+    </mat-expansion-panel>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+
+    <mat-toolbar color="primary" class="navbar navbar-expand-lg">
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <div class="container">
+        <mat-icon class="navbar-brand me-2">business</mat-icon>
+        <span *ngIf="_userSession" class="me-auto mb-2 mb-lg-0">{{_userSession.NombreCompleto}}</span>
+        <span class="example-spacer"></span>
+        <div style="padding: 5px; margin: 2%;">
+          <!-- <span>{{MySession().usuario}}</span> -->
+
+          <span>
+            <!-- {{MySession().usuario}} -->
+          </span>
+
+          <!-- <span>{{MySession().avatar}}</span> -->
+          <!-- aqui va el diseño para mostrar el usuario las variables son
+              showSession par mostrar
+             usuario nombre de usuario;
+             avatar si es que va usar un logo
+            role  rol del usuario-->
+        </div>
+
+        <div class="d-flex align-items-center r-0">
+          <button mat-raised-button color="warn" (click)="logout()">
+            <mat-icon fontIcon="power_settings_new"></mat-icon>
+            Cerrar Sesion</button>
+          <!-- <button *ngIf="!checkSession()" mat-raised-button (click)="openDialogSesion()"
+              class="btn btn-link bg-light px-3 shadow text-primary">Iniciar Sesion</button> -->
+
+        </div>
+      </div>
+    </mat-toolbar>
+
+    <!-- Add Content Here -->
+    <div class="container-fluid p-5">
+      <router-outlet></router-outlet>
+    </div>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>

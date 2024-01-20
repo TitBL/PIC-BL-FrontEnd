@@ -1,0 +1,7 @@
+<div class="histogram-container">
+    <div *ngFor="let bar of bars" class="histogram-bar">
+      <div class="bar" [style.height.%]="bar.value">
+        <div class="label" matTooltip="{{ bar.label }}">{{ bar.value }}%</div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,22 @@
+.histogram-container {
+    display: flex;
+  }
+
+  .histogram-bar {
+    margin-right: 8px;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .bar {
+    background-color: steelblue;
+    width: 30px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .label {
+    text-align: center;
+    width: 100%;
+  }

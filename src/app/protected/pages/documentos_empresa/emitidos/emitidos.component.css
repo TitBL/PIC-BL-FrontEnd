@@ -1,0 +1,25 @@
+.responsive-table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.button-row button,
+.button-row a {
+    margin-right: 3px;
+}
+
+.btn_success {
+    background-color: #078503;
+    color: white;
+}
+
+.small-input .mat-input-element {
+    font-size: 0.8rem;
+    padding: 5px;
+  }
+
+@media (max-width: 600px) {
+    .responsive-table {
+        display: block;
+    }
+}

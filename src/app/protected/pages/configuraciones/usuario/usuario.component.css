@@ -1,0 +1,28 @@
+.activo {
+    background-color: green;
+  }
+
+  .inactivo {
+    background-color: red;
+  }
+
+  .responsive-table {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .button-row button,
+  .button-row a {
+    margin-right: 5px;
+  }
+  
+.btn_success {
+  background-color: #078503;
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .responsive-table {
+    display: block;
+  }
+}

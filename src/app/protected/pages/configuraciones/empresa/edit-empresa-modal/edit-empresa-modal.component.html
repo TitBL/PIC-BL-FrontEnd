@@ -1,0 +1,102 @@
+<div class="p-xl-3 p-1" style="height: 80vh;">
+    <form (ngSubmit)="onSaveClick()" #empresaForm="ngForm">
+        <mat-dialog-content class="row">
+            <h2 *ngIf="IsNew"><mat-icon>storefront</mat-icon> Nueva Empresa</h2>
+            <h2 *ngIf="!IsNew"><mat-icon>edit</mat-icon> Editar Empresa - {{empresa.NombreComercial}}</h2>
+            <!-- RUC -->
+            <mat-form-field class="full-width col-xl-6 col-12">
+                <input matInput placeholder="RUC" name="ruc" [(ngModel)]="empresa.RUC" required maxlength="20">
+            </mat-form-field>
+
+            <!-- RAZON SOCIAL -->
+            <mat-form-field class="full-width col-xl-6 col-12">
+                <input matInput placeholder="Razón Social" name="razonSocial" [(ngModel)]="empresa.RazonSocial" required
+                    maxlength="100">
+            </mat-form-field>
+
+            <!-- NOMBRE COMERCIAL -->
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Nombre Comercial" name="nombreComercial"
+                    [(ngModel)]="empresa.NombreComercial" required maxlength="100">
+            </mat-form-field>
+
+            <!-- Puede enviar correos que emite? -->
+            <mat-checkbox class="col-xl-6 col-12" [(ngModel)]="empresa.PuedeEnviarCorreo" name="puedeEnviarCorreos"
+                (change)="onCheckboxChange('puedeEnviarCorreos', $event.checked)">¿Puede enviar correos que
+                emite?</mat-checkbox>
+
+            <!-- Usar configuración SMTP del aplicativo -->
+            <mat-checkbox class="col-xl-6 col-12" [(ngModel)]="empresa.UsaConfiguracionSMTP"
+                name="usarConfiguracionSMTP" (change)="onCheckboxChange('usarConfiguracionSMTP', $event.checked)">Usar
+                configuración SMTP del
+                aplicativo</mat-checkbox>
+
+            <div *ngIf="empresa.PuedeEnviarCorreo && !empresa.UsaConfiguracionSMTP">
+
+                <!-- EMAIL PARA ENVIO -->
+                <mat-form-field class="full-width col-xl-6 col-12">
+                    <input matInput placeholder="Email para Envío" name="emailParaEnvio" [(ngModel)]="empresa.Email"
+                        [required]="empresa.PuedeEnviarCorreo && !empresa.UsaConfiguracionSMTP" maxlength="100">
+                </mat-form-field>
+
+                <!-- SERVIDOR SMTP -->
+                <mat-form-field class="full-width col-xl-6 col-12">
+                    <input matInput placeholder="Servidor SMTP" name="servidorSMTP" [(ngModel)]="empresa.Servidor"
+                        [required]="empresa.PuedeEnviarCorreo && !empresa.UsaConfiguracionSMTP" maxlength="50">
+                </mat-form-field>
+
+                <!-- PUERTO SMTP -->
+                <mat-form-field class="full-width col-xl-6 col-12">
+                    <input matInput placeholder="Puerto SMTP" name="puertoSMTP" [(ngModel)]="empresa.Puerto"
+                        [required]="empresa.PuedeEnviarCorreo && !empresa.UsaConfiguracionSMTP" maxlength="8"
+                        pattern="[0-9]+">
+                </mat-form-field>
+
+                <!-- TIPO SEGURIDAD SMTP -->
+                <mat-form-field class="full-width col-xl-6 col-12">
+                    <mat-select placeholder="Tipo Seguridad SMTP" name="tipoSeguridadSMTP"
+                        [(ngModel)]="empresa.TipoSeguridad"
+                        [required]="empresa.PuedeEnviarCorreo && !empresa.UsaConfiguracionSMTP">
+                        <mat-option *ngFor="let tipo of tiposSeguridadSMTP"
+                            [value]="tipo.value">{{tipo.label}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <!-- USUARIO SMTP -->
+                <mat-form-field class="full-width col-xl-6 col-12">
+                    <input matInput placeholder="Usuario SMTP" name="usuarioSMTP" [(ngModel)]="empresa.UsuarioSMTP"
+                        [required]="empresa.PuedeEnviarCorreo && !empresa.UsaConfiguracionSMTP" maxlength="100">
+                </mat-form-field>
+
+                <!-- CONTRASEÑA USUARIO SMTP -->
+                <mat-form-field class="full-width col-xl-6 col-12">
+                    <input matInput type="password" placeholder="Contraseña Usuario SMTP" name="contrasenaUsuarioSMTP"
+                        [(ngModel)]="empresa.PasswordSMTP"
+                        [required]="empresa.PuedeEnviarCorreo && !empresa.UsaConfiguracionSMTP" maxlength="50">
+                </mat-form-field>
+            </div>
+
+            <!-- API KEY -->
+            <mat-form-field class="full-width col-xl-9 col-12">
+                <input matInput placeholder="API Key" name="apiKey" readonly="true" [(ngModel)]="empresa.APIKey"
+                    required maxlength="100">
+            </mat-form-field>
+            <button mat-raised-button (click)="onGenerarApiKeyClick()" color="primary" matTooltip="Generar API Key" class="col-xl-3 col-12">
+                <mat-icon>key</mat-icon>
+                Generar APIKey</button>
+            <!-- LOGO -->
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Logo" name="logo" (change)="onLogoChange($event)">
+            </mat-form-field>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+
+            <div class="button-container">
+                <button mat-raised-button color="primary" type="submit" [disabled]="empresaForm.invalid"
+                    [mat-dialog-close]="true">Guardar</button>
+                <button mat-raised-button color="accent" mat-dialog-close>Cancel</button>
+            </div>
+
+        </mat-dialog-actions>
+    </form>
+</div>
