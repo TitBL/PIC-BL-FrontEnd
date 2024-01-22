@@ -105,9 +105,9 @@ export class AuthService {
     }),
       tap(resp => {
         if (resp.Success) {
-          const datosEncriptados = this.cryptoService.encrypt(resp.Data['Permisos ']);
+          const datosEncriptados = this.cryptoService.encrypt(resp.Data['Permisos']);
           localStorage.setItem('Permisos', datosEncriptados);
-          this.permissionService.configurePermissions(resp.Data['Permisos ']);
+          this.permissionService.configurePermissions(resp.Data['Permisos']);
         }
       })
     );

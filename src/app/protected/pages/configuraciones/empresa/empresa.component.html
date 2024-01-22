@@ -37,7 +37,7 @@
   <ng-container matColumnDef="logo">
     <th mat-header-cell *matHeaderCellDef> Logo </th>
     <td mat-cell *matCellDef="let viewEmpresa">
-      <img mat-card-sm-image style="width: 70px;" src="{{viewEmpresa.logo}}">
+      <img mat-card-sm-image style="width: 70px;" src="{{isValidImageUrl(viewEmpresa.logo)}}">
     </td>
   </ng-container>
 

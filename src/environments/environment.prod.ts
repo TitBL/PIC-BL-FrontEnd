@@ -1,4 +1,6 @@
 export const environment = {
     production: true,
-    baseUrl: 'http://localhost:4000/api'
+    baseUrl: 'https://20.6.80.64:444/api',
+    terminos:'apetrajajajsns ',
+    urlSinImagen: './assets/img/sin-imagen-disponible.jpg' 
 }

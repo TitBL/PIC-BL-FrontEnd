@@ -15,6 +15,7 @@ import { GeneralComponent } from './pages/configuraciones/general/general.compon
 import { UsuarioComponent } from './pages/configuraciones/usuario/usuario.component';
 import { EditUsuarioModalComponent } from './pages/configuraciones/usuario/edit-usuario-modal/edit-usuario-modal.component';
 import { HistogramComponent } from './components/histogram/histogram.component';
+import { SMTPSecurityTypeSelectComponent } from './components/smtpsecurity-type-select/smtpsecurity-type-select.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { HistogramComponent } from './components/histogram/histogram.component';
     UsuarioComponent,
     EditUsuarioModalComponent,
     HistogramComponent,
+    SMTPSecurityTypeSelectComponent,
   ],
   imports: [
     CommonModule,

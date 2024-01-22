@@ -33,7 +33,9 @@ export class EditEmpresaModalComponent implements OnInit {
 
   nuevoFormulario: FormGroup;
   apiKeyGenerada: string = ''; // Variable para almacenar la API Key generada
+  selectedSecurityType: number | undefined;
 
+  
 
   constructor(private fb: FormBuilder,
     private _snackBar: MatSnackBar,
@@ -68,18 +70,10 @@ export class EditEmpresaModalComponent implements OnInit {
     });
   }
 
- 
-
-  tiposSeguridadSMTP = [
-    { value: '1', label: 'Tipo 1' },
-    { value: '2', label: 'Tipo 2' },
-    { value: '3', label: 'Tipo 3' }
-  ];
-
-
 
   // Método llamado al hacer clic en el botón "Guardar" en el modal
   onSaveClick() {
+    console.log("GUARDANDO DESDE MODAL", this.nuevoFormulario.value);
     if (this.nuevoFormulario.valid) {
       // Emitir el evento para que el componente padre (EmpresaComponent) maneje la lógica de guardar
       this.guardarEmpresa.emit(this.nuevoFormulario.value);
@@ -103,13 +97,12 @@ export class EditEmpresaModalComponent implements OnInit {
   }
 
   onCheckboxChange(checkboxName: string, isChecked: boolean) {
-    const oppositeCheckbox = checkboxName === 'usarConfiguracionSMTP' ? 'puedeEnviarCorreos' : 'usarConfiguracionSMTP';
-
-    this.nuevoFormulario.get(checkboxName)?.setValue(isChecked);
-    this.nuevoFormulario.get(oppositeCheckbox)?.setValue(!isChecked);
-  
-    this.empresa.PuedeEnviarCorreo = checkboxName === 'usarConfiguracionSMTP' ? !isChecked : isChecked;
-    this.empresa.UsaConfiguracionSMTP = checkboxName === 'usarConfiguracionSMTP' ? isChecked : !isChecked;
+      this.nuevoFormulario.get(checkboxName)?.setValue(isChecked);
+    if (checkboxName === 'puedeEnviarCorreos') {
+      this.empresa.PuedeEnviarCorreo = isChecked;
+    } else {
+      this.empresa.UsaConfiguracionSMTP = isChecked;
+    }
   }
   
   onLogoChange(event: any) {
@@ -136,6 +129,11 @@ export class EditEmpresaModalComponent implements OnInit {
           });
         }
       })
+  }
+
+  onSecurityTypeSelected(securityType: number) {
+    this.selectedSecurityType = securityType;
+    this.empresa.TipoSeguridad = securityType;
   }
 
   ngOnInit(): void {

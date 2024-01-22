@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { EstadosEnum } from 'src/app/protected/enums/estados.enum';
 import { PermissionsService } from 'src/app/protected/services/permissions.service';
 import { PermissionsEnum } from 'src/app/protected/enums/permissions.enum';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-empresa',
@@ -76,7 +77,7 @@ export class EmpresaComponent implements OnInit {
       })
   }
 
-  
+
   /**
    * Initializes the component and sets the initial values for permissions and business list.
    */
@@ -131,7 +132,7 @@ export class EmpresaComponent implements OnInit {
   }
 
   openNewEmpresaModal(): void {
-      this.empresaService.openNewEmpresaModal(this.isNew, this.idEmpresa);
+    this.empresaService.openNewEmpresaModal(this.isNew, this.idEmpresa);
   }
 
   // Método llamado desde el modal para guardar la empresa
@@ -155,7 +156,7 @@ export class EmpresaComponent implements OnInit {
     }
   }
 
-  toggleBusinessStatusById(_id:number, _enable: boolean) {
+  toggleBusinessStatusById(_id: number, _enable: boolean) {
     this.empresaService.toggleBusinessStatus(_id, _enable).subscribe(
       (respuesta) => {
         console.log(respuesta);
@@ -166,4 +167,9 @@ export class EmpresaComponent implements OnInit {
     );
   }
 
+
+  isValidImageUrl(url: string): string {
+    const imageFormatRegex = /\.(jpeg|jpg|gif|png|bmp)$/;
+    return imageFormatRegex.test(url)? url : environment.urlSinImagen;
+  }
 }

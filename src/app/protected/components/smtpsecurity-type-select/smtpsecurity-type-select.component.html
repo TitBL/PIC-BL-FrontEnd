@@ -1,0 +1,18 @@
+<mat-form-field [ngClass]="classes">
+    <mat-label>Tipo Seguridad SMTP</mat-label>
+    <mat-select [(ngModel)]="selectedSecurityType" (ngModelChange)="onSecurityTypeChange()">
+        <mat-option *ngFor="let securityType of securityTypes" [value]="securityType.value">
+            {{ securityType.name }}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+
+<!-- <mat-form-field class="full-width col-xl-6 col-12">
+                    <mat-select placeholder="Tipo Seguridad SMTP" name="tipoSeguridadSMTP"
+                        [(ngModel)]="empresa.TipoSeguridad"
+                        [required]="empresa.PuedeEnviarCorreo && !empresa.UsaConfiguracionSMTP">
+                        <mat-option *ngFor="let tipo of tiposSeguridadSMTP"
+                            [value]="tipo.value">{{tipo.label}}</mat-option>
+                    </mat-select>
+                </mat-form-field> -->

@@ -31,7 +31,7 @@
                 configuración SMTP del
                 aplicativo</mat-checkbox>
 
-            <div *ngIf="empresa.PuedeEnviarCorreo && !empresa.UsaConfiguracionSMTP">
+            <div *ngIf="empresa.PuedeEnviarCorreo">
 
                 <!-- EMAIL PARA ENVIO -->
                 <mat-form-field class="full-width col-xl-6 col-12">
@@ -53,14 +53,17 @@
                 </mat-form-field>
 
                 <!-- TIPO SEGURIDAD SMTP -->
-                <mat-form-field class="full-width col-xl-6 col-12">
+                <!-- <mat-form-field class="full-width col-xl-6 col-12">
                     <mat-select placeholder="Tipo Seguridad SMTP" name="tipoSeguridadSMTP"
                         [(ngModel)]="empresa.TipoSeguridad"
                         [required]="empresa.PuedeEnviarCorreo && !empresa.UsaConfiguracionSMTP">
                         <mat-option *ngFor="let tipo of tiposSeguridadSMTP"
                             [value]="tipo.value">{{tipo.label}}</mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
+
+                <app-smtpsecurity-type-select [classes]="['full-width', 'col-xl-6', 'col-12']" 
+                (securityTypeSelected)="onSecurityTypeSelected($event)"></app-smtpsecurity-type-select>
 
                 <!-- USUARIO SMTP -->
                 <mat-form-field class="full-width col-xl-6 col-12">
@@ -78,7 +81,7 @@
 
             <!-- API KEY -->
             <mat-form-field class="full-width col-xl-9 col-12">
-                <input matInput placeholder="API Key" name="apiKey" readonly="true" [(ngModel)]="empresa.APIKey"
+                <input matInput placeholder="API Key" name="apiKey" [readonly]="true" [(ngModel)]="empresa.APIKey"
                     required maxlength="100">
             </mat-form-field>
             <button mat-raised-button (click)="onGenerarApiKeyClick()" color="primary" matTooltip="Generar API Key" class="col-xl-3 col-12">
