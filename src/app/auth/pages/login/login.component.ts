@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommonService } from 'src/app/shared/common.service';
+import { catchError, of, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -10,47 +12,49 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  public _loading: boolean = false;
+  public loading: boolean = false;
   // Form group for login details
   miFormulario: FormGroup = this.fb.group({
-    email: ['test1@test.com', [Validators.required, Validators.email]],
-    pwd: ['123456', [Validators.required, Validators.minLength(6)]]
+    email: ['', [Validators.required, Validators.email]],
+    pwd: ['', [Validators.required, Validators.minLength(6)]]
   });
 
   constructor(private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
-    private _snackBar: MatSnackBar) { }
+    private commonService: CommonService) { }
 
   /**
    * Attempts to log in the user using the provided credentials.
    * If successful, navigates to the dashboard; otherwise, displays an error message.
    */
   login() {
-    this._loading = true;
-
+    this.loading = true;
+  
     const { email, pwd } = this.miFormulario.value;
-    // Subscribe to the login method in the AuthService
+  
     this.authService.login(email, pwd)
-      .subscribe(ok => {
-        // Successful login
-        if (ok === true) {
-          this._loading = false;
-          this.authService.getUserSession();
-          this.router.navigateByUrl('/dashboard');
-
-        } else {
-          // Failed login
-          this._loading = false;
-          this._snackBar.open('Credenciales incorrectas', '', {
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-            duration: 4000,
-            panelClass: 'app-notification-error'
-          });
-        }
-      })
-
+      .subscribe(
+        (ok) => {
+          // Successful login
+          if (ok === true) {
+            this.authService.getUserSession();
+            this.router.navigateByUrl('/dashboard');
+            this.commonService.notifySuccessResponse('¡Bienvenido!');
+          } else {
+            console.error('Error:', ok);
+           // this.commonService.notifyErrorResponse('Credenciales incorrectas');
+          }
+        },
+        (error) => {
+          // Handle connection error
+          console.log('ERROR LOGIN: ',error);
+          this.commonService.notifyErrorResponse('Ocurrió un error');
+          //console.error('Error LOGIN:', error);
+          this.loading = false; // Desbloquear la pantalla cuando se complete la operación
+        },
+        () => this.loading = false // Desbloquear la pantalla cuando se complete la operación
+      );
   }
 
 }

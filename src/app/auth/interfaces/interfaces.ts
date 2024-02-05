@@ -1,16 +1,16 @@
 export interface AuthResponse {
     Success: boolean;
     Message?: string;
-    Data?: [];
+    Data?: TokenResponse;
     Exception?: [];
     Code?: number;
 }
 
 export interface TokenResponse {
-    token: string;
-    token_type: string;
-    token_expires: string;
-    session: string;
+    token?: string;
+    token_type?: string;
+    token_expires?: string;
+    session?: string;
 }
 
 export interface UserAuth {

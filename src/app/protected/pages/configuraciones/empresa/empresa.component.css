@@ -13,12 +13,12 @@
   
   .button-row button,
   .button-row a {
-    margin-right: 5px;
+    margin-right: 0;
   }
   
   .btn_success {
-  background-color: #078503;
-  color: white;
+  /* background-color: #078503; */
+  color: #078503;
   }
   
   @media (max-width: 600px) {

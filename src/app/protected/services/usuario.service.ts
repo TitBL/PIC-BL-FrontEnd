@@ -1,20 +1,19 @@
 import { Injectable } from '@angular/core';
 import { ViewUsuario } from '../interfaces/usersession';
-import { environment } from 'src/environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, tap } from 'rxjs';
 import { Response } from '../interfaces/response';
 import { EditUsuarioModalComponent } from '../pages/configuraciones/usuario/edit-usuario-modal/edit-usuario-modal.component';
+import { CommonService } from 'src/app/shared/common.service';
+import { ApiRoutes } from 'src/app/shared/api-routes';
+import { CryptoService } from './crypto.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
-  private baseUrl: string = environment.baseUrl;
   private _users!: ViewUsuario[];
-  private token = localStorage.getItem('token');
-  private session = localStorage.getItem('session');
 
   /**
    * Getter for the list of businesses.
@@ -23,80 +22,104 @@ export class UsuarioService {
     return { ...this._users };
   }
 
-  constructor(private http: HttpClient, private dialog: MatDialog) { }
+  constructor(private http: HttpClient,
+    private dialog: MatDialog,
+    private commonService: CommonService,
+    private cryptoService: CryptoService) { }
 
   /**
-  * Retrieves the list of businesses based on the provided status.
-  * @param _estado The status of the businesses to be retrieved.
+  * Retrieves the list of users based on the provided status.
+  * @param _estado The status of the users to be retrieved.
   * @returns An Observable containing the response data.
   */
   getUsersByState(_estado: string): Observable<any> {
-    const url = `${this.baseUrl}/usuario/list/${_estado}`;
-    const headers = this.createHeaders();
+    const url = `${ApiRoutes.User.Get_byState}/${_estado}`;
+    const headers = this.commonService.createHeaders();
 
     return this.http.get<Response>(url, { headers })
       .pipe(
         tap(resp => {
           if (resp.Success) {
-            var _data = JSON.stringify(resp.Data)
-            const _response = JSON.parse(_data || '{}');
-            this._users = _response;
+            this._users = resp.Data;
           }
         })
       );
   }
 
   getUserById(_id: number): Observable<any> {
-    const url = `${this.baseUrl}/usuario/${_id}`;
-    const headers = this.createHeaders();
+    const url = `${ApiRoutes.User.Get_byId}/${_id}`;
+    const headers = this.commonService.createHeaders();
     return this.http.get<Response>(url, { headers });
   }
 
-  
-  openNewUserModal(_isNew: boolean, _idEmpresa:number): void {
+
+  openNewUserModal(_isNew: boolean, _idUsuario: number): void {
     const dialogRef = this.dialog.open(EditUsuarioModalComponent, {
       width: '75%', // Ajusta el tamaño según tus necesidades
       disableClose: true, // Opcional: Para evitar cerrar la modal haciendo clic fuera de ella
-      data: { IsNew: _isNew, IdEmpresa: _idEmpresa }
+      data: { IsNew: _isNew, IdUsuario: _idUsuario }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // Puedes realizar acciones después de cerrar la modal, si es necesario
-    });
-  }
+      // Agrega el nuevo registro a tu fuente de datos
+      console.log(result);
+      if (_isNew) {
+        this.createNewUser(result).subscribe(
+          (respuesta) => {
+            console.log(respuesta);
+            this.commonService.notifySuccessResponse(respuesta.Message);
+          },
+          (error) => {
+            console.error('Error:', error);
+            this.commonService.notifyErrorResponse(error.error.Message);
+          }
+        );
+      } else {
+        this.updateUser(result).subscribe(
+          (respuesta) => {
+            console.log(respuesta);
+            this.commonService.notifySuccessResponse(respuesta.Message);
+          },
+          (error) => {
+            console.error('Error:', error);
+            this.commonService.notifyErrorResponse(error.message);
 
-  createNewUser(empresa: any): Observable<any> {
-    const url = `${this.baseUrl}/empresa`;
-    const headers = this.createHeaders();
-    return this.http.post(url, empresa, { headers });
-  }
+          }
+        );
+      }
+    })
+}
 
-  getApiKey(): Observable<any> {
-    const url = `${this.baseUrl}/empresa/api_key`;
-    const headers = this.createHeaders();
+  createNewUser(usuario: any): Observable<any> {
+    const url = ApiRoutes.User.New;
+    const headers = this.commonService.createHeaders();
+    return this.http.post(url, usuario, { headers });
+  };
 
-    return this.http.get<Response>(url, { headers });
-  }
+  updateUser(usuario: any): Observable<any> {
+    const url = ApiRoutes.User.Update;
+    const headers = this.commonService.createHeaders();
+    return this.http.post(url, usuario, { headers });
+  };
 
-  toggleUserStatus(_idEmpresa: number, enable: boolean): Observable<any> {
-    const action = enable ? 'habilitar' : 'deshabilitar';
-    const url = `${this.baseUrl}/empresa/${action}/${_idEmpresa}`;
-    const headers = this.createHeaders();
+
+  toggleUserStatus(_idUsuario: number, enable: boolean): Observable<any> {
+    const route = enable ? ApiRoutes.User.Enable : ApiRoutes.User.Disable;
+    const url = `${route}/${_idUsuario}`;
+    const headers = this.commonService.createHeaders();
     var body = {};
-    console.log(headers);
     return this.http.post(url, body, { headers });
-  }
+  };
 
-  /**
-   * Creates HttpHeaders with the authorization token and session ID.
-   * @returns HttpHeaders with authorization information.
-   */
-  private createHeaders(): HttpHeaders {
-    return new HttpHeaders({
-      'Authorization': `Bearer ${this.token}`,
-      'SessionId': `${this.session}`,
-      'Accept': 'application/json'
-    });
+  getIdUserSession(): number {
+    const datosEnLocalStorage = localStorage.getItem('IdUser');
+    // Verificar si datosEnLocalStorage no es null antes de intentar desencriptar
+    if (datosEnLocalStorage !== null) {
+      let idUser = this.cryptoService.decrypt(datosEnLocalStorage);
+      return idUser;
+    }
+    // Devolver vacio si datosEnLocalStorage es null
+    return -1;
   }
 }
 

@@ -14,18 +14,18 @@
   </div>
   <hr>
 </div>
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8  responsive-table" matSort matPaginator>
 
 
   <!-- Name Column -->
   <ng-container matColumnDef="Nombre">
-    <th mat-header-cell *matHeaderCellDef> Nombre </th>
+    <th mat-header-cell *matHeaderCellDef  mat-sort-header> Nombre </th>
     <td mat-cell *matCellDef="let viewRol"> {{viewRol.Nombre}} </td>
   </ng-container>
 
   <!-- Weight Column -->
   <ng-container matColumnDef="Descripcion">
-    <th mat-header-cell *matHeaderCellDef> Descripción </th>
+    <th mat-header-cell *matHeaderCellDef  mat-sort-header> Descripción </th>
     <td mat-cell *matCellDef="let viewRol"> {{viewRol.Descripcion}} </td>
   </ng-container>
 
@@ -33,15 +33,13 @@
   <ng-container matColumnDef="Funciones">
     <th mat-header-cell *matHeaderCellDef> Funciones </th>
     <td mat-cell *matCellDef="let viewRol">
-      <button mat-mini-fab color="accent" matTooltip="Editar">
+      <button mat-icon-button color="primary" matTooltip="Editar">
         <mat-icon fontIcon="edit"></mat-icon>
       </button>
 
-      <button mat-mini-fab color="warn" matTooltip="Deshabilitar">
+      <button mat-icon-button color="warn" matTooltip="Deshabilitar">
         <mat-icon fontIcon="delete"></mat-icon>
       </button>
-
-
 
     </td>
   </ng-container>
@@ -49,3 +47,7 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+
+<app-spinner [loading]="loading"></app-spinner>

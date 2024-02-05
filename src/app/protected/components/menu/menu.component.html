@@ -57,6 +57,16 @@
       <a class="menuItem" mat-flat-button href="/historial">Emitidos1</a>
       <a class="menuItem" mat-flat-button href="/cita">Emitidos2</a>
     </mat-expansion-panel>
+
+
+    <div class="d-flex flex-column">
+      <button mat-raised-button color="warn" (click)="logout()">
+        <mat-icon fontIcon="power_settings_new"></mat-icon>
+        Cerrar Sesion</button>
+      <!-- <button *ngIf="!checkSession()" mat-raised-button (click)="openDialogSesion()"
+          class="btn btn-link bg-light px-3 shadow text-primary">Iniciar Sesion</button> -->
+
+    </div>
   </mat-sidenav>
 
   <mat-sidenav-content>
@@ -85,14 +95,7 @@
             role  rol del usuario-->
         </div>
 
-        <div class="d-flex align-items-center r-0">
-          <button mat-raised-button color="warn" (click)="logout()">
-            <mat-icon fontIcon="power_settings_new"></mat-icon>
-            Cerrar Sesion</button>
-          <!-- <button *ngIf="!checkSession()" mat-raised-button (click)="openDialogSesion()"
-              class="btn btn-link bg-light px-3 shadow text-primary">Iniciar Sesion</button> -->
-
-        </div>
+       
       </div>
     </mat-toolbar>
 

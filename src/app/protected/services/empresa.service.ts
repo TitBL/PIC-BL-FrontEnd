@@ -1,20 +1,21 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ViewEmpresa } from '../interfaces/empresa';
-import { environment } from 'src/environments/environment';
+import { Empresa, NewEmpresa, UpdateEmpresa, ViewEmpresa, ViewEmpresaSession } from '../interfaces/empresa';
 import { Observable, tap } from 'rxjs';
 import { Response } from '../interfaces/response';
 import { MatDialog } from '@angular/material/dialog';
 import { EditEmpresaModalComponent } from '../pages/configuraciones/empresa/edit-empresa-modal/edit-empresa-modal.component';
+import { CommonService } from 'src/app/shared/common.service';
+import { ApiRoutes } from 'src/app/shared/api-routes';
+import { CryptoService } from './crypto.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmpresaService {
-  private baseUrl: string = environment.baseUrl;
   private _business!: ViewEmpresa[];
-  private token = localStorage.getItem('token');
-  private session = localStorage.getItem('session');
 
   /**
    * Getter for the list of businesses.
@@ -23,7 +24,10 @@ export class EmpresaService {
     return { ...this._business };
   }
 
-  constructor(private http: HttpClient, private dialog: MatDialog) { }
+  constructor(private http: HttpClient,
+    private dialog: MatDialog,
+    private commonService: CommonService,
+    private cryptoService: CryptoService) { }
 
   /**
   * Retrieves the list of businesses based on the provided status.
@@ -31,71 +35,130 @@ export class EmpresaService {
   * @returns An Observable containing the response data.
   */
   getBusinessByState(_estado: string): Observable<any> {
-    const url = `${this.baseUrl}/empresa/list/${_estado}`;
-    const headers = this.createHeaders();
+    const url = `${ApiRoutes.Business.Get_byState}/${_estado}`;
+    const headers = this.commonService.createHeaders();
 
     return this.http.get<Response>(url, { headers })
       .pipe(
         tap(resp => {
           if (resp.Success) {
-            var _data = JSON.stringify(resp.Data)
-            const _response = JSON.parse(_data || '{}');
-            this._business = _response;
+            this._business = resp.Data;
           }
         })
       );
   }
 
   getBusinessById(_id: number): Observable<any> {
-    const url = `${this.baseUrl}/empresa/${_id}`;
-    const headers = this.createHeaders();
+    const url = `${ApiRoutes.Business.Get_byId}/${_id}`;
+    const headers = this.commonService.createHeaders();
     return this.http.get<Response>(url, { headers });
   }
 
-  
-  openNewEmpresaModal(_isNew: boolean, _idEmpresa:number): void {
+
+  openNewEmpresaModal(_isNew: boolean, _idEmpresa: number): void {
     const dialogRef = this.dialog.open(EditEmpresaModalComponent, {
       width: '75%', // Ajusta el tamaño según tus necesidades
       disableClose: true, // Opcional: Para evitar cerrar la modal haciendo clic fuera de ella
       data: { IsNew: _isNew, IdEmpresa: _idEmpresa }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      // Puedes realizar acciones después de cerrar la modal, si es necesario
+    dialogRef.componentInstance.guardarEmpresa.subscribe((nuevoRegistro) => {
+      // Agrega el nuevo registro a tu fuente de datos
+      console.log(nuevoRegistro);
+      if (_isNew) {
+        this.createNewBusiness(nuevoRegistro).subscribe(
+          (respuesta) => {
+            console.log(respuesta);
+            this.commonService.notifySuccessResponse(respuesta.Message);
+          },
+          (error) => {
+            console.error('Error:', error);
+            this.commonService.notifyErrorResponse(error.error.Message);
+          }
+        );
+      } else {
+        this.updateBusiness(nuevoRegistro).subscribe(
+          (respuesta) => {
+            console.log(respuesta);
+            this.commonService.notifySuccessResponse(respuesta.Message);
+          },
+          (error) => {
+            console.error('Error:', error);
+            this.commonService.notifyErrorResponse(error.message);
+            
+          }
+        );
+      }
+     
+      // Puedes utilizar MatTableDataSource y llamar a .data para actualizar la tabla
     });
   }
 
-  createNewBusiness(empresa: any): Observable<any> {
-    const url = `${this.baseUrl}/empresa`;
-    const headers = this.createHeaders();
-    return this.http.post(url, empresa, { headers });
+  createNewBusiness(empresa: Empresa): Observable<any> {
+    const newEmpresa : NewEmpresa = {
+      APIKey : empresa.APIKey,
+      Email : empresa.Email,
+      Logo : empresa.Logo,
+      NombreComercial : empresa.NombreComercial,
+      PasswordSMTP : empresa.PasswordSMTP,
+      PuedeEnviarCorreo : empresa.PuedeEnviarCorreo,
+      Puerto : empresa.Puerto,
+      RazonSocial : empresa.RazonSocial,
+      RUC : empresa.RUC,
+      Servidor : empresa.Servidor,
+      TipoSeguridad: empresa.TipoSeguridad,
+      UsaConfiguracionSMTP : empresa.UsaConfiguracionSMTP,
+      UsuarioSMTP : empresa.UsuarioSMTP
+    }
+    const url = ApiRoutes.Business.New;
+    const headers = this.commonService.createHeaders();
+    return this.http.post(url, newEmpresa, { headers });
+  }
+  
+  updateBusiness(empresa: Empresa): Observable<any> {
+    const _id : number = empresa.id;
+    const updateEmpresa : UpdateEmpresa = {
+      APIKey : empresa.APIKey,
+      Email : empresa.Email,
+      Logo : empresa.Logo,
+      NombreComercial : empresa.NombreComercial,
+      PasswordSMTP : empresa.PasswordSMTP,
+      PuedeEnviarCorreo : empresa.PuedeEnviarCorreo,
+      Puerto : empresa.Puerto,
+      Servidor : empresa.Servidor,
+      TipoSeguridad: empresa.TipoSeguridad,
+      UsaConfiguracionSMTP : empresa.UsaConfiguracionSMTP,
+      UsuarioSMTP : empresa.UsuarioSMTP
+    };
+
+    const url =  `${ApiRoutes.Business.Update}/${_id}`;
+    const headers = this.commonService.createHeaders();
+    return this.http.put(url, updateEmpresa, { headers });
   }
 
   getApiKey(): Observable<any> {
-    const url = `${this.baseUrl}/empresa/api_key`;
-    const headers = this.createHeaders();
-
+    const url = ApiRoutes.Business.Get_APIKey;
+    const headers = this.commonService.createHeaders();
     return this.http.get<Response>(url, { headers });
   }
 
   toggleBusinessStatus(_idEmpresa: number, enable: boolean): Observable<any> {
-    const action = enable ? 'habilitar' : 'deshabilitar';
-    const url = `${this.baseUrl}/empresa/${action}/${_idEmpresa}`;
-    const headers = this.createHeaders();
+    const route = enable ? ApiRoutes.Business.Enable : ApiRoutes.Business.Disable;
+    const url = `${route}/${_idEmpresa}`;
+    const headers = this.commonService.createHeaders();
     var body = {};
-    console.log(headers);
     return this.http.post(url, body, { headers });
   }
 
-  /**
-   * Creates HttpHeaders with the authorization token and session ID.
-   * @returns HttpHeaders with authorization information.
-   */
-  private createHeaders(): HttpHeaders {
-    return new HttpHeaders({
-      'Authorization': `Bearer ${this.token}`,
-      'SessionId': `${this.session}`,
-      'Accept': 'application/json'
-    });
+  getBusinessOfUserSession(): ViewEmpresaSession[] {
+    const datosEnLocalStorage = localStorage.getItem('Empresas');
+    // Verificar si datosEnLocalStorage no es null antes de intentar desencriptar
+    if (datosEnLocalStorage !== null) {
+      let businessList = this.cryptoService.decrypt(datosEnLocalStorage);
+      return businessList;
+    }
+    // Devolver vacio si datosEnLocalStorage es null
+    return [];
   }
+
 }

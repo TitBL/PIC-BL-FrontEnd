@@ -1,20 +1,18 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map, tap } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { Response } from '../interfaces/response';
 import { ViewDocumentIssued, ViewDocumentReceived } from '../interfaces/documento';
+import { ApiRoutes } from 'src/app/shared/api-routes';
+import { CommonService } from 'src/app/shared/common.service';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class DocumentoService {
-  private baseUrl: string = environment.baseUrl;
   private _documentsReceived!: ViewDocumentReceived[];
   private _documentsIssued!: ViewDocumentIssued[];
-  private token = localStorage.getItem('token');
-  private session = localStorage.getItem('session');
 
 
   /**
@@ -31,8 +29,9 @@ export class DocumentoService {
     return { ...this._documentsIssued };
   }
 
-  constructor(private http: HttpClient) { }
-  
+  constructor(private http: HttpClient,
+    private commonService: CommonService) { }
+
   /**
    * Retrieves the list of received documents for a consumer within a specified date range.
    * @param IdEmpresa The ID of the company (consumer).
@@ -43,9 +42,9 @@ export class DocumentoService {
   getDocumentReceivedConsumer(IdEmpresa: number,
     FechaDesde: string,
     FechaHasta: string): Observable<any> {
-    const url = `${this.baseUrl}/documento/list/recibidos/consumidor`;
+    const url = ApiRoutes.Document.Get_DocReceivedConsumers;
     var body = { IdEmpresa, FechaDesde, FechaHasta };
-    const headers = this.createHeaders();
+    const headers = this.commonService.createHeaders();
 
     return this.http.post<Response>(url, body, { headers })
       .pipe(
@@ -57,7 +56,7 @@ export class DocumentoService {
       );
   }
 
- 
+
   /**
    * Retrieves the list of received documents for a business within a specified date range.
    * @param IdEmpresa The ID of the business.
@@ -68,9 +67,9 @@ export class DocumentoService {
   getDocumentReceivedBusiness(IdEmpresa: number,
     FechaDesde: string,
     FechaHasta: string): Observable<any> {
-    const url = `${this.baseUrl}/documento/list/recibidos/empresa`;
+    const url = ApiRoutes.Document.Get_DocReceivedBusiness;
     var body = { IdEmpresa, FechaDesde, FechaHasta };
-    const headers = this.createHeaders();
+    const headers = this.commonService.createHeaders();
 
     return this.http.post<Response>(url, body, { headers })
       .pipe(
@@ -82,20 +81,20 @@ export class DocumentoService {
       );
   }
 
-  
-   /**
-   * Retrieves the list of issued documents for a business within a specified date range.
-   * @param IdEmpresa The ID of the business.
-   * @param FechaDesde The start date for the document search.
-   * @param FechaHasta The end date for the document search.
-   * @returns An Observable containing the response data.
-   */
+
+  /**
+  * Retrieves the list of issued documents for a business within a specified date range.
+  * @param IdEmpresa The ID of the business.
+  * @param FechaDesde The start date for the document search.
+  * @param FechaHasta The end date for the document search.
+  * @returns An Observable containing the response data.
+  */
   getDocumentIssuedBusiness(IdEmpresa: number,
     FechaDesde: string,
     FechaHasta: string): Observable<any> {
-    const url = `${this.baseUrl}/documento/list/emitidos/empresa`;
+    const url = ApiRoutes.Document.Get_DocIssuedBusiness;
     var body = { IdEmpresa, FechaDesde, FechaHasta };
-    const headers = this.createHeaders();
+    const headers = this.commonService.createHeaders();
 
     return this.http.post<Response>(url, body, { headers })
       .pipe(
@@ -103,38 +102,41 @@ export class DocumentoService {
           if (resp.Success) {
             this._documentsIssued = resp.Data;
           }
-        })
+        }),map(documents => documents.Data.map(this.mapToViewDocument))
       );
   }
 
-  /**
-   * Maps the response data to the ViewDocumentIssued model.
-   * @param item The item to be mapped.
-   * @returns The mapped ViewDocumentIssued object.
-   */
-  private mapToViewDocumentIssued(item: any): ViewDocumentIssued {
+  private mapToViewDocument(document: any): ViewDocumentIssued {
     return {
-      Anio: item.Anio,
-      Mes: item.Mes,
-      Dia: item.Dia,
-      FechaDocumento: item['Fecha Documento'],
-      FechayHoraAutorizacion: item['Fecha y Hora Autorizacion'],
-      Receptor: item.Receptor,
-      TipoDocumento: item.TipoDocumento,
-      Documento: item.Documento,
-      ClaveAcceso: item.ClaveAcceso
+      Anio: document.Anio,
+      Mes: document.Mes,
+      Dia: document.Dia,
+      FechaDocumento: document['Fecha Documento'],
+      FechayHoraAutorizacion: document['Fecha y Hora Autorizacion'],
+      Receptor: document.Receptor,
+      TipoDocumento: document['Tipo Documento'],
+      Documento: document.Documento,
+      ClaveAcceso: document['Clave Acceso']
     };
   }
 
-  /**
-   * Creates HttpHeaders with the authorization token and session ID.
-   * @returns HttpHeaders with authorization information.
-   */
-  private createHeaders(): HttpHeaders {
-    return new HttpHeaders({
-      'Authorization': `Bearer ${this.token}`,
-      'SessionId': `${this.session}`,
-      'Content-Type': 'application/json'
-    });
+  downloadPDF(Id: string): Observable<any> {
+    const url = `${ApiRoutes.Document.Download_PDF}/${Id}`;
+    const headers = this.commonService.createHeaders();
+    return this.http.get<Blob>(url, { headers, responseType: 'arraybuffer' as 'json' });
   }
+
+  downloadXML(Id: string): Observable<any> {
+    const url = `${ApiRoutes.Document.Download_XML}/${Id}`;
+    const headers = this.commonService.createHeaders();
+    return this.http.get<Blob>(url, { headers, responseType: 'arraybuffer' as 'json'});
+  }
+
+  forwardDocumentMail(clave_acceso: string, email_copia: string): Observable<any> {
+    const url = ApiRoutes.Document.ForwardingDocumentByMail;
+    const headers = this.commonService.createHeaders();
+    var body = { clave_acceso, email_copia };
+    return this.http.post<Response>(url, body, { headers });
+  }
+
 }

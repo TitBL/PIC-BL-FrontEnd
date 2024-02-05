@@ -1,4 +1,4 @@
 export enum SMTPSecurityTypeEnum {
     'SSL Security' = 0,
-    'TLS Security' = 1
+    'TLS Security' = 1,
 }

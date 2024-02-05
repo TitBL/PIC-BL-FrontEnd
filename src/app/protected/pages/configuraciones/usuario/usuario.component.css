@@ -17,8 +17,7 @@
   }
   
 .btn_success {
-  background-color: #078503;
-  color: white;
+  color: #078503;
 }
 
 @media (max-width: 600px) {

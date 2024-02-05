@@ -5,7 +5,7 @@
 
 .button-row button,
 .button-row a {
-    margin-right: 3px;
+    margin-right: 0;
 }
 
 .btn_success {
@@ -16,6 +16,25 @@
 .small-input .mat-input-element {
     font-size: 0.8rem;
     padding: 5px;
+  }
+
+  /* Estilo para la capa de superposición (overlay) */
+.overlay {
+    position: fixed; /* Se mantiene fijo en la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%; /* O el ancho que desees */
+    height: 100%; /* O la altura que desees */
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco semitransparente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999; /* Valor alto para asegurarse de que esté por encima de otros elementos */
+  }
+  
+  /* Estilo opcional para el spinner dentro de la capa de superposición */
+  .overlay mat-spinner {
+    color: #1976D2; /* Color del spinner */
   }
 
 @media (max-width: 600px) {

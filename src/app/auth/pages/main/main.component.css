@@ -1,0 +1,14 @@
+.body_main {
+    border: 1px solid #dddd;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: #000c 0 3px 8px;
+    margin: auto;
+}
+
+.img_login{
+    height: auto;
+    width: 100%;
+    object-fit: cover;
+    filter: drop-shadow(6px 6px 3px rgb(40,40,40));
+}

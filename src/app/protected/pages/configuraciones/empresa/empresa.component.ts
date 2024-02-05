@@ -1,18 +1,21 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Empresa, ViewEmpresa } from '../../../interfaces/empresa';
 import { EmpresaService } from 'src/app/protected/services/empresa.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { EstadosEnum } from 'src/app/protected/enums/estados.enum';
 import { PermissionsService } from 'src/app/protected/services/permissions.service';
 import { PermissionsEnum } from 'src/app/protected/enums/permissions.enum';
-import { environment } from 'src/environments/environment';
+import { CommonService } from 'src/app/shared/common.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogTemplateComponent } from 'src/app/protected/components/dialog-template/dialog-template.component';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-empresa',
   templateUrl: './empresa.component.html',
   styleUrls: ['./empresa.component.css']
 })
-export class EmpresaComponent implements OnInit {
+export class EmpresaComponent implements OnInit, AfterViewInit {
   // Columns to be displayed in the table
   displayedColumns: string[] = ['logo',
     'RUC',
@@ -20,9 +23,11 @@ export class EmpresaComponent implements OnInit {
     'nombre_comercial',
     'funciones'];
   // Data source for the table
-  //dataSource!: ViewEmpresa[];
-  dataSource: ViewEmpresa[] = [];
-  filteredDataSource: ViewEmpresa[] = [];
+  dataSource = new MatTableDataSource<ViewEmpresa>();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  //filteredDataSource: ViewEmpresa[] = [];
   // Selected state for filtering the business list
   selected = '1';
   // Permission flags for various actions
@@ -35,7 +40,10 @@ export class EmpresaComponent implements OnInit {
   idEmpresa: number = -1;
   filterValue: string = '';
 
+  loading: boolean = false;
+
   empresaTemp: Empresa = {
+    id: 0,
     RUC: '',
     RazonSocial: '',
     NombreComercial: '',
@@ -53,74 +61,67 @@ export class EmpresaComponent implements OnInit {
 
 
   constructor(private empresaService: EmpresaService,
-    private _snackBar: MatSnackBar,
-    private permissionsService: PermissionsService) { }
+    private permissionsService: PermissionsService,
+    private dialog: MatDialog,
+    public commonService: CommonService) { }
+
+  /**
+   * Initializes the component and sets the initial values for permissions and business list.
+   */
+  ngOnInit(): void {
+    this.getBusinessList(this.selected);
+ 
+    this.visualizarEmpresa = this.hasPermission(PermissionsEnum.VisualizarEmpresa);
+    this.crearEmpresa = this.hasPermission(PermissionsEnum.CrearEmpresa);
+    this.editarEmpresa = this.hasPermission(PermissionsEnum.EditarEmpresa);
+    this.cambiarEstadoEmpresa = this.hasPermission(PermissionsEnum.HabilitarDeshabilitarEmpresa);
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    this.paginator.pageSize = 5;
+  }
 
   /**
 * Retrieves the list of businesses based on the selected state.
 * @param _estado The selected state for filtering the business list.
 */
   getBusinessList(_estado: string) {
+    // Bloquear la pantalla
+    this.loading = true;
     this.empresaService.getBusinessByState(_estado)
       .subscribe(ok => {
         if (ok.Success === true) {
-          this.dataSource = ok.Data;
+          this.dataSource.data = ok.Data;
           this.applyFilter();
         } else {
-          this._snackBar.open('Ha ocurrido un error en la consulta', '', {
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-            duration: 4000,
-            panelClass: 'app-notification-error'
-          });
+          this.commonService.notifyErrorResponse('Ha ocurrido un error en la consulta');
         }
-      })
+      }).add(() => {
+        // Desbloquear la pantalla cuando se complete la operación
+        this.loading = false;
+      });
   }
 
 
-  /**
-   * Initializes the component and sets the initial values for permissions and business list.
-   */
-  ngOnInit(): void {
-    this.visualizarEmpresa = this.hasPermission(PermissionsEnum.VisualizarEmpresa);
-    this.crearEmpresa = this.hasPermission(PermissionsEnum.CrearEmpresa);
-    this.editarEmpresa = this.hasPermission(PermissionsEnum.EditarEmpresa);
-    this.cambiarEstadoEmpresa = this.hasPermission(PermissionsEnum.HabilitarDeshabilitarEmpresa);
-    this.getBusinessList(this.selected);
-  }
 
   /**
   * Handles the change event of the state dropdown and retrieves the filtered business list.
   * @param event The change event object.
   */
-  onSelectChange(event: any) {
-    this.getBusinessList(event.value);
+  onSelectChange(event: string) {
+    this.selected = event;
+    this.getBusinessList(event);
   }
 
   applyFilter() {
-    // Convertir la cadena de filtro a minúsculas para hacer una comparación sin distinción entre mayúsculas y minúsculas
-    const lowerCaseFilter = this.filterValue.toLowerCase();
-    // Filtrar la lista original basándose en el valor proporcionado
-    this.filteredDataSource = this.dataSource.filter((empresa) => {
-      // Comprobar si la cadena de filtro está presente en alguna de las propiedades
-      return (
-        empresa.RUC.toLowerCase().includes(lowerCaseFilter) ||
-        empresa.razon_social.toLowerCase().includes(lowerCaseFilter) ||
-        empresa.nombre_comercial.toLowerCase().includes(lowerCaseFilter)
-      );
-    });
+      // Convertir la cadena de filtro a minúsculas para hacer una comparación sin distinción entre mayúsculas y minúsculas
+    const lowerCaseFilter = this.filterValue.trim().toLowerCase();
+    // Aplicar el filtro a la fuente de datos
+    this.dataSource.filter = lowerCaseFilter;
   }
 
-
-
-  /**
-  * Gets the human-readable name of a business state based on the provided state enum.
-  * @param _state The business state enum value.
-  * @returns The human-readable name of the business state.
-  */
-  getNameState(_state: EstadosEnum): string {
-    return _state === EstadosEnum.Activo ? 'Activo' : 'Inactivo';
-  }
 
   /**
    * Checks if the user has the specified permission.
@@ -135,41 +136,29 @@ export class EmpresaComponent implements OnInit {
     this.empresaService.openNewEmpresaModal(this.isNew, this.idEmpresa);
   }
 
-  // Método llamado desde el modal para guardar la empresa
-  guardarEmpresa(empresa: any) {
-    // Lógica para guardar la empresa, ya sea creando una nueva o editando según el estado de nuevaEmpresa
-    if (this.isNew) {
-      // Crear nueva empresa
-      this.empresaService.createNewBusiness(empresa).subscribe(
-        (respuesta) => {
-          // Manejar la respuesta del servicio si es necesario
-          console.log('Nueva empresa creada:', respuesta);
-        },
-        (error) => {
-          // Manejar errores si es necesario
-          console.error('Error al crear la nueva empresa:', error);
-        }
-      );
-    } else {
-      // Editar empresa existente
-      // Puedes llamar a un método del servicio para actualizar la empresa existente
-    }
-  }
-
   toggleBusinessStatusById(_id: number, _enable: boolean) {
-    this.empresaService.toggleBusinessStatus(_id, _enable).subscribe(
-      (respuesta) => {
-        console.log(respuesta);
-      },
-      (error) => {
-        console.error('Error:', error);
+    const dialogRef = this.dialog.open(DialogTemplateComponent, {
+      disableClose: true, // Opcional: Para evitar cerrar la modal haciendo clic fuera de ella
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        // Bloquear la pantalla
+        this.loading = true;
+        this.empresaService.toggleBusinessStatus(_id, _enable).subscribe(
+          (respuesta) => {
+            this.commonService.notifySuccessResponse(respuesta.Message);
+            this.getBusinessList(this.selected);
+          },
+          (error) => {
+            console.error('Error:', error);
+          }
+        ).add(() => {
+          // Desbloquear la pantalla cuando se complete la operación
+          this.loading = false;
+        });
       }
-    );
+    });
   }
 
-
-  isValidImageUrl(url: string): string {
-    const imageFormatRegex = /\.(jpeg|jpg|gif|png|bmp)$/;
-    return imageFormatRegex.test(url)? url : environment.urlSinImagen;
-  }
 }

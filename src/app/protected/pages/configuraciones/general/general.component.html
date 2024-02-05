@@ -1,1 +1,51 @@
-<p>general works!</p>
+<h2>Configuraciones</h2>
+<hr>
+
+<form (ngSubmit)="saveParametros()">
+    <div class="row">
+
+        <!-- <mat-form-field class="full-width col-xl-12 col-12">
+            <mat-label>URL API</mat-label>
+            <input matInput [(ngModel)]="parametros.urlApi" name="urlApi" required>
+        </mat-form-field> -->
+
+        <mat-form-field class="full-width col-xl-6 col-12">
+            <mat-label>EMAIL</mat-label>
+            <input matInput [(ngModel)]="parametros.mail" name="email" required>
+        </mat-form-field>
+
+
+        <mat-form-field class="full-width col-xl-6 col-12">
+            <mat-label>SERVIDOR SMTP</mat-label>
+            <input matInput [(ngModel)]="parametros.server" name="server" required>
+        </mat-form-field>
+
+
+        <mat-form-field class="full-width col-xl-6 col-12">
+            <mat-label>PUERTO SMTP</mat-label>
+            <input matInput [(ngModel)]="parametros.port" name="port" required>
+        </mat-form-field>
+
+        <div class="full-width col-xl-6 col-12">
+            <app-smtpsecurity-type-select [required]="true" (securityTypeSelected)="onSecurityTypeSelected($event)"
+                [preselectedType]="parametros.type_security"></app-smtpsecurity-type-select>
+        </div>
+
+        <mat-form-field class="full-width col-xl-6 col-12">
+            <mat-label>USUARIO SMTP</mat-label>
+            <input matInput [(ngModel)]="parametros.user" name="user" required>
+        </mat-form-field>
+
+        <mat-form-field class="full-width col-xl-6 col-12">
+            <mat-label>CONTRASEÑA SMTP</mat-label>
+            <input matInput [(ngModel)]="parametros.password" name="password" required>
+        </mat-form-field>
+
+        <div class="text-end">
+            <button mat-raised-button class="btn_success" type="submit">Guardar</button>
+
+        </div>
+    </div>
+</form>
+
+<app-spinner [loading]="loading"></app-spinner>

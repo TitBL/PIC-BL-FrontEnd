@@ -23,19 +23,27 @@ export interface ViewUsuario{
 }
 
 export interface NewUsuario{
-    id: number;
-    IdRol: string;
     DNI: string;
     NombreUsuario: string;
     NombreCompleto: string;
-    Direccion: string;
+    IdRol: number;
+    Contrasena: string;
     Email: string;
+    Direccion: string;
+    TerminosCondiciones:string;
+    TerminosCondicionesAcceptacion: boolean,
     Empresas: Empresa[];
-    TerminosCondiciones: TerminosCondiciones;
 }
 
-export interface TerminosCondiciones{
-    Terminos: string;
-    Aceptado: string;
-    FechaRegistro: string;
+export interface UpdateUsuario{
+        NombreUsuario:string;
+        NombreCompleto: string;
+        IdRol:number;
+        Email: string;
+        Direccion: string;
+        IdUsuario: number;
+        TerminosCondiciones: string;
+        TerminosCondicionesAcceptacion: boolean;
+        Empresas: Empresa[]
 }
+

@@ -1,72 +1,59 @@
+<h2>USUARIOS</h2>
+<hr>
 <div class="row">
-  <div class="col-xl-12">
-    <h2>USUARIOS</h2>
+  <div class="col-xl-7">
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Buscar</mat-label>
+      <input matInput [(ngModel)]="filterValue" (input)="applyFilter()" placeholder="Buscar" />
+    </mat-form-field>
   </div>
-  <hr>
-  <div class="row mt-3">
-    <div class="col-xl-8">
-      <mat-form-field appearance="outline" style="width: 100%;">
-        <mat-label>Buscar</mat-label>
-        <input matInput [(ngModel)]="filterValue" (input)="applyFilter()" placeholder="Buscar" />
-      </mat-form-field>
-    </div>
-    <div class="col-xl-2">
-      <mat-form-field appearance="outline">
-        <mat-label>Estado</mat-label>
-        <mat-select [(value)]="selected" (selectionChange)="onSelectChange($event)">
-          <mat-option value="1">Activo</mat-option>
-          <mat-option value="0">Inactivo</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div class="col-xl-2 text-end" *ngIf="crearUsuario">
-      <button mat-raised-button color="primary" matTooltip="Nuevo" (click)="isNew = true; openNewUserModal()">
-        <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
-        Nuevo
-      </button>
-      <div style="display: none;" *matCellDef="let viewEmpresa">
-        <app-edit-empresa-modal [IsNew]="isNew" [idEmpresa]="idEmpresa"
-          (empresaGuardada)="guardarUsuario($event)"></app-edit-empresa-modal>
-      </div>
-    </div>
+  <div class="full-width col-xl-3">
+    <app-estado-select (stateSelected)="onSelectChange($event)"></app-estado-select>
   </div>
-
+  <div class="col-xl-2 text-end" *ngIf="crearUsuario">
+    <button mat-raised-button color="primary" type="button" matTooltip="Nuevo" (click)="isNew = true; openNewUserModal()">
+      <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
+      Nuevo
+    </button>
+  </div>
 </div>
 
-<table mat-table [dataSource]="filteredDataSource" class="mat-elevation-z8 responsive-table">
+<div style="display: none;" *matCellDef="let viewUsuario">
+  <app-edit-usuario-modal [IsNew]="isNew" [IdUsuario]="idUsuario"
+    (guardarUsuario)="guardarUsuario($event)"></app-edit-usuario-modal>
+</div>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 responsive-table" matSort matPaginator>
 
   <ng-container matColumnDef="NombreUsuario">
-    <th mat-header-cell *matHeaderCellDef> Nombre Usuario </th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre Usuario </th>
     <td mat-cell *matCellDef="let viewUsuario"> {{viewUsuario.NombreUsuario}} </td>
   </ng-container>
 
   <ng-container matColumnDef="Rol">
-    <th mat-header-cell *matHeaderCellDef> Rol </th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Rol </th>
     <td mat-cell *matCellDef="let viewUsuario"> {{viewUsuario.Rol}} </td>
   </ng-container>
 
   <ng-container matColumnDef="email">
-    <th mat-header-cell *matHeaderCellDef> Email </th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
     <td mat-cell *matCellDef="let viewUsuario"> {{viewUsuario.email}} </td>
   </ng-container>
 
   <ng-container matColumnDef="funciones">
     <th mat-header-cell *matHeaderCellDef> Funciones </th>
     <td mat-cell *matCellDef="let viewUsuario" class="button-row">
-      <button mat-mini-fab *ngIf="visualizarUsuario" color="primary" matTooltip="Ver">
-        <mat-icon fontIcon="visibility"></mat-icon>
-      </button>
-      <button mat-mini-fab *ngIf="editarUsuario" color="accent" matTooltip="Editar"
-        (click)="isNew = false; idEmpresa = viewUsuario.id; openNewUserModal()">
+      <button mat-icon-button *ngIf="editarUsuario && selected === '1' && viewUsuario.Rol !== 'Master'" color="primary" matTooltip="Editar"
+        (click)="isNew = false; idUsuario = viewUsuario.id; openNewUserModal()">
         <mat-icon fontIcon="edit"></mat-icon>
       </button>
 
-      <button mat-mini-fab *ngIf="cambiarEstadoUsuario && selected === '1' " color="warn" matTooltip="Deshabilitar"
+      <button mat-icon-button *ngIf="cambiarEstadoUsuario && selected === '1' && viewUsuario.Rol !== 'Master'" color="warn" matTooltip="Deshabilitar"
         (click)="toggleUserStatusById(viewUsuario.id, false)">
         <mat-icon fontIcon="delete"></mat-icon>
       </button>
 
-      <button mat-mini-fab *ngIf="cambiarEstadoUsuario && selected ==='0'" class="btn_success" matTooltip="Habilitar"
+      <button mat-icon-button *ngIf="cambiarEstadoUsuario && selected ==='0' && viewUsuario.Rol !== 'Master'" class="btn_success" matTooltip="Habilitar"
         (click)="toggleUserStatusById(viewUsuario.id, true)">
         <mat-icon fontIcon="done"></mat-icon>
       </button>
@@ -77,3 +64,7 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+
+<app-spinner [loading]="loading"></app-spinner>

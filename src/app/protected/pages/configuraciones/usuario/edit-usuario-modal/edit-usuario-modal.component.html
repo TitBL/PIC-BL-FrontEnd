@@ -1,1 +1,78 @@
-<p>edit-usuario-modal works!</p>
+<div class="p-xl-3 p-1" style="height: 80vh;">
+    <form [formGroup]="crearUsuarioForm" (ngSubmit)="onSubmit()">
+        <mat-dialog-content class="row">
+            <h2><mat-icon>{{ IsNew ? 'group' : 'edit' }}</mat-icon>
+                {{ IsNew ? 'Nuevo Usuario' : 'Editar Usuario - ' + usuario.NombreCompleto }}</h2>
+            <!-- Campos del formulario -->
+            <mat-tab-group mat-stretch-tabs="false" color="primary" mat-align-tabs="start">
+                <mat-tab label="General">
+                    <div class="row mt-2 p-3">
+
+                        <mat-form-field>
+                            <mat-label>Cédula - DNI - RUC</mat-label>
+                            <input matInput placeholder="Cédula - DNI - RUC" formControlName="cedula" required>
+                        </mat-form-field>
+        
+                        <mat-form-field class="col-6">
+                            <mat-label>Nombres</mat-label>
+                            <input matInput placeholder="Nombre" formControlName="nombre" required>
+                        </mat-form-field>
+        
+                        <mat-form-field class="col-6">
+                            <mat-label>Apellidos</mat-label>
+                            <input matInput placeholder="Apellido" formControlName="apellido" required>
+                        </mat-form-field>
+        
+                        <mat-form-field class="col-6">
+                            <mat-label>Rol</mat-label>
+                            <mat-select formControlName="rol" required>
+                                <mat-option *ngFor="let rol of roles" [value]="rol.value">{{ rol.label }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+        
+                        <mat-form-field class="col-6">
+                            <mat-label>Nombre de Usuario</mat-label>
+                            <input matInput placeholder="nombreUsuario" formControlName="nombreUsuario" required>
+                        </mat-form-field>
+        
+                        <mat-form-field class="col-6">
+                            <mat-label>Contraseña</mat-label>
+                            <input matInput placeholder="Contraseña" type="password" formControlName="contrasena">
+                        </mat-form-field>
+                        
+                        <mat-form-field class="col-6">
+                            <mat-label>Repetir Contraseña</mat-label>
+                            <input matInput placeholder="Repetir Contraseña" type="password" formControlName="repetirContrasena">
+                        </mat-form-field>
+                    
+                        <mat-form-field class="col-6">
+                            <mat-label>Email</mat-label>
+                          <input matInput placeholder="Email" formControlName="email">
+                        </mat-form-field>
+        
+                     
+                    </div>
+                </mat-tab>
+                <mat-tab label="Empresas">
+                    <app-empresa-select 
+                    (businessSelected)="onEmpresaSelected($event)"></app-empresa-select>
+                   
+
+                </mat-tab>
+              </mat-tab-group>
+
+
+           
+
+        </mat-dialog-content>
+    </form>
+    <mat-dialog-actions align="end" >
+        <div class="button-container">
+            <button mat-raised-button type="submit" color="primary" [disabled]="crearUsuarioForm.invalid"
+                [mat-dialog-close]="true">Crear Usuario</button>
+            <button mat-raised-button type="button" color="accent" mat-dialog-close>Cancel</button>
+        </div>
+    </mat-dialog-actions>
+</div>
+
+<app-spinner [loading]="loading"></app-spinner>
