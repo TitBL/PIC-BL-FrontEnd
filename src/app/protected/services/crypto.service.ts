@@ -6,8 +6,12 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class CryptoService {
+  private secretKey: string;
 
-  private secretKey = environment.secretKeyCryptoService;
+  constructor() {
+    this.secretKey = environment.secretKeyCryptoService; // Obtén la clave desde un archivo de configuración o de otro origen
+  }
+ // private secretKey = environment.secretKeyCryptoService;
 
   encrypt(data: any): string {
     const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), this.secretKey).toString();
@@ -16,6 +20,7 @@ export class CryptoService {
 
   decrypt(encryptedData: string): any {
     const decryptedData = CryptoJS.AES.decrypt(encryptedData, this.secretKey);
-    return JSON.parse(decryptedData.toString(CryptoJS.enc.Utf8));
+    return  JSON.parse(decryptedData.toString(CryptoJS.enc.Utf8));
   }
+
 }

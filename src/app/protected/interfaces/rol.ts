@@ -12,3 +12,10 @@ export interface NewRol {
     Descripcion: string;
     Permisos: number[];
 }
+
+export interface UpdateRol {
+    id: number;
+    Nombre: string;
+    Descripcion: string;
+    Permisos: number[];
+}

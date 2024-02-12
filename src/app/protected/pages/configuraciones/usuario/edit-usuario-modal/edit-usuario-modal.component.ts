@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ViewEmpresaSession } from 'src/app/protected/interfaces/empresa';
 import { NewUsuario } from 'src/app/protected/interfaces/usersession';
+import { EmpresaService } from 'src/app/protected/services/empresa.service';
+import { UsuarioService } from 'src/app/protected/services/usuario.service';
 import { CommonService } from 'src/app/shared/common.service';
 
 @Component({
@@ -14,7 +17,7 @@ export class EditUsuarioModalComponent implements OnInit {
   @Input() IdUsuario: number = 0;
   @Output() guardarUsuario = new EventEmitter<NewUsuario>();
 
-
+  businessList : ViewEmpresaSession[] = [];
   crearUsuarioForm: FormGroup;
   roles = [
     { value: 'ADMIN', label: 'Administrador' },
@@ -39,8 +42,11 @@ export class EditUsuarioModalComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private commonService: CommonService,
-    public dialogRef: MatDialogRef<EditUsuarioModalComponent>
-  ) {
+    private empresaService : EmpresaService,
+    private usuarioService : UsuarioService,
+    public dialogRef: MatDialogRef<EditUsuarioModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any) {
+      
     this.crearUsuarioForm = this.fb.group({
       cedula: ['', Validators.required],
       nombre: ['', Validators.required],
@@ -54,7 +60,13 @@ export class EditUsuarioModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Puedes realizar inicializaciones adicionales aquí si es necesario
+    this.businessList = this.empresaService.getBusinessOfUserSession();
+    this.businessList.sort((a, b) => a.nombreComercial.localeCompare(b.nombreComercial));
+    this.IsNew = this.data['IsNew'];
+    this.IdUsuario = this.data['IdUsuario'];
+    if (!this.IsNew) {
+      this.getUserById(this.IdUsuario);
+    }
   }
 
   onSubmit() {
@@ -70,6 +82,20 @@ export class EditUsuarioModalComponent implements OnInit {
 
     this.guardarUsuario.emit(this.crearUsuarioForm.value);
     this.dialogRef.close();
+  }
+
+  getUserById(_id: number) {
+    this.usuarioService.getUserById(_id)
+      .subscribe(ok => {
+        if (ok.Success === true) {
+          this.usuario = ok.Data;
+          console.log(ok.Data);
+          console.log(this.usuario);
+          
+        } else {
+          this.commonService.notifyErrorResponse('Ha ocurrido un error en la consulta');
+        }
+      })
   }
 
   onEmpresaSelected(empresa: number) {

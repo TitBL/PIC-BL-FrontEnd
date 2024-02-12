@@ -18,8 +18,18 @@ export class DashboardComponent implements OnInit{
     { label: 'Category E', value: 90 },
   ];
 
+  pieData: any[]=[
+    ['Mes', 'Cantidad de documentos'],
+    ['Enero', 1134],
+    ['Febrero', 2344],
+    ['Marzo', 2332],
+    ['Abril', 4552],
+    ['Mayo', 557]
+  ]
+
+  pieTitle:string = 'Documentos Recibidos'
+
   ngOnInit(): void {
-    console.log("ngOnInit APLICATION DASHBOARD");
    
   }
 

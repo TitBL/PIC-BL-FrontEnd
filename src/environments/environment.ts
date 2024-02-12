@@ -1,6 +1,7 @@
 export const environment = {
     production: false,
-    baseUrl: 'https://20.6.80.64:444/api',
+    baseUrl: 'https://pic.habnis.com:444/api',
     urlSinImagen: './assets/img/sin-imagen-disponible.jpg',
-    secretKeyCryptoService : '!$9R4Zi#0h'
+    secretKeyCryptoService : '5Je8XpeVq9k7K43f6lCcIyOrufb',
+    RUC: '1792368022001'
 }

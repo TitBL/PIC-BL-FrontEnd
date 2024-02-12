@@ -2,9 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonService } from 'src/app/shared/common.service';
-import { catchError, of, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -30,9 +28,9 @@ export class LoginComponent {
    */
   login() {
     this.loading = true;
-  
+
     const { email, pwd } = this.miFormulario.value;
-  
+
     this.authService.login(email, pwd)
       .subscribe(
         (ok) => {
@@ -43,12 +41,12 @@ export class LoginComponent {
             this.commonService.notifySuccessResponse('¡Bienvenido!');
           } else {
             console.error('Error:', ok);
-           // this.commonService.notifyErrorResponse('Credenciales incorrectas');
+            // this.commonService.notifyErrorResponse('Credenciales incorrectas');
           }
         },
         (error) => {
           // Handle connection error
-          console.log('ERROR LOGIN: ',error);
+          console.log('ERROR LOGIN: ', error);
           this.commonService.notifyErrorResponse('Ocurrió un error');
           //console.error('Error LOGIN:', error);
           this.loading = false; // Desbloquear la pantalla cuando se complete la operación

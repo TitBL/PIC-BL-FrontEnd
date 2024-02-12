@@ -1,46 +1,60 @@
+<h2>ROLES</h2>
+<hr>
 <div class="row">
-  <div class="col-xl-10">
-    <h2>ROLES</h2>
+  <div class="col-xl-7">
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Buscar</mat-label>
+      <input matInput [(ngModel)]="filterValue" (input)="applyFilter()" placeholder="Buscar" />
+    </mat-form-field>
+  </div>
+  <div class="full-width col-xl-3">
+    <app-estado-select (stateSelected)="onSelectChange($event)"></app-estado-select>
   </div>
   <div class="col-xl-2 text-end">
-    <button mat-raised-button color="primary" matTooltip="Nuevo">
+    <button mat-raised-button color="primary" matTooltip="Nuevo" (click)="isNew = true; openNewRolModal()">
       <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
       Nuevo
     </button>
-    <div style="display: none;" *matCellDef="let viewEmpresa">
-      <!-- <app-edit-empresa-modal [IsNew]="isNew" [idEmpresa]="idEmpresa"
-      (empresaGuardada)="guardarUsuario($event)"></app-edit-empresa-modal> -->
-    </div>
   </div>
-  <hr>
 </div>
+
+<div style="display: none;" *matCellDef="let viewRol">
+  <app-edit-rol-modal [IsNew]="isNew" [idRol]="idRol">
+  </app-edit-rol-modal>
+</div>
+
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8  responsive-table" matSort matPaginator>
 
 
   <!-- Name Column -->
   <ng-container matColumnDef="Nombre">
-    <th mat-header-cell *matHeaderCellDef  mat-sort-header> Nombre </th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
     <td mat-cell *matCellDef="let viewRol"> {{viewRol.Nombre}} </td>
   </ng-container>
 
   <!-- Weight Column -->
   <ng-container matColumnDef="Descripcion">
-    <th mat-header-cell *matHeaderCellDef  mat-sort-header> Descripción </th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripción </th>
     <td mat-cell *matCellDef="let viewRol"> {{viewRol.Descripcion}} </td>
   </ng-container>
 
-  <!-- Symbol Column -->
   <ng-container matColumnDef="Funciones">
     <th mat-header-cell *matHeaderCellDef> Funciones </th>
-    <td mat-cell *matCellDef="let viewRol">
-      <button mat-icon-button color="primary" matTooltip="Editar">
+    <td mat-cell *matCellDef="let viewRol" class="button-row">
+      <button mat-icon-button *ngIf="selected === '1'" color="primary" matTooltip="Editar"
+        (click)="isNew = false; idRol = viewRol.id; openNewRolModal()">
         <mat-icon fontIcon="edit"></mat-icon>
       </button>
 
-      <button mat-icon-button color="warn" matTooltip="Deshabilitar">
+      <button mat-icon-button *ngIf="selected === '1' " color="warn" matTooltip="Deshabilitar"
+        (click)="toggleRolStatusById(viewRol, false)">
         <mat-icon fontIcon="delete"></mat-icon>
       </button>
 
+      <button mat-icon-button *ngIf="selected ==='0'" class="btn_success" matTooltip="Habilitar"
+        (click)="toggleRolStatusById(viewRol, true)">
+        <mat-icon fontIcon="done"></mat-icon>
+      </button>
     </td>
   </ng-container>
 

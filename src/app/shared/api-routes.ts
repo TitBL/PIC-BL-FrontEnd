@@ -85,5 +85,6 @@ export const ApiRoutes = {
         New : `${environment.baseUrl + baseUser}`,
         Disable : `${environment.baseUrl + baseUser}/deshabilitar`,
         Enable : `${environment.baseUrl + baseUser}/habilitar`,
+        ResetPassword : `${environment.baseUrl + baseUser}/resetpwd`,
     }
 };

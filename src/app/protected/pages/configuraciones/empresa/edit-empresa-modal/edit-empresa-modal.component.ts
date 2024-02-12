@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Empresa } from 'src/app/protected/interfaces/empresa';
 import { EmpresaService } from 'src/app/protected/services/empresa.service';
 import { CommonService } from 'src/app/shared/common.service';

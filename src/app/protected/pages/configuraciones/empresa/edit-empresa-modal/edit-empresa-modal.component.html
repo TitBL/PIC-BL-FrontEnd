@@ -8,13 +8,15 @@
                     <!-- RUC -->
                     <mat-form-field class="col-12">
                         <mat-label>RUC</mat-label>
-                        <input matInput placeholder="RUC" name="ruc" disabled="{{!IsNew}}" [(ngModel)]="empresa.RUC"
+                        <input matInput placeholder="RUC" name="ruc" disabled="{{!IsNew}}" 
+                        [(ngModel)]="empresa.RUC"
                             required maxlength="20">
                     </mat-form-field>
                     <!-- RAZON SOCIAL -->
                     <mat-form-field class="col-12">
                         <mat-label>Razón Social</mat-label>
-                        <input matInput placeholder="Razón Social" name="razonSocial" disabled="{{!IsNew}}"
+                        <input matInput placeholder="Razón Social" name="razonSocial" 
+                        disabled="{{!IsNew}}"
                             [(ngModel)]="empresa.RazonSocial" required maxlength="100">
                     </mat-form-field>
                     <!-- NOMBRE COMERCIAL -->
@@ -108,7 +110,7 @@
             <div class="button-container">
                 <button mat-raised-button color="primary" type="submit" [disabled]="empresaForm.invalid"
                     [mat-dialog-close]="true">Guardar</button>
-                <button mat-raised-button color="accent" mat-dialog-close>Cancel</button>
+                <button mat-raised-button type="button" color="accent" mat-dialog-close>Cancelar</button>
             </div>
         </mat-dialog-actions>
     </form>

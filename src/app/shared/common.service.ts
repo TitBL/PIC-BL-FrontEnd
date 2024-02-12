@@ -1,17 +1,21 @@
-import { HttpHeaders } from '@angular/common/http';
+import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from 'src/environments/environment';
+import { SessionVariables } from '../auth/enums/sessionVariables';
+import { Observable, of } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonService {
  
-  private token = localStorage.getItem('token');
-  private session = localStorage.getItem('session');
+  private token = sessionStorage.getItem(SessionVariables.Token);
+  private session = sessionStorage.getItem(SessionVariables.Session);
 
-  constructor(private _snackBar: MatSnackBar) { }
+  constructor(private _snackBar: MatSnackBar,
+    private router: Router,) { }
 
   /**
    * Creates HttpHeaders with the authorization token and session ID.
@@ -94,4 +98,18 @@ export class CommonService {
     });
   }
 
+  handleError = (error: HttpErrorResponse): Observable<any> => {
+    console.error('Error de conexión:', error.status);
+    console.error('Error:', error);
+
+    if (error.status === 0) {
+      this.notifyErrorResponse('Error de conexión: el servidor no responde');
+    } else if (error.status === 401) {
+      this.notifyErrorResponse('Ocurrio un error');
+    } else {
+      this.notifyErrorResponse('Error desconocido');
+    }
+    this.router.navigate(['/auth']);
+    return of(null);
+  }
 }

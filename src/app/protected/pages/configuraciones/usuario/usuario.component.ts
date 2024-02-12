@@ -143,16 +143,19 @@ export class UsuarioComponent implements OnInit, AfterViewInit {
     }
   }
 
-  toggleUserStatusById(_id: number, _enable: boolean) {
+  toggleUserStatusById(_user: ViewUsuario, _enable: boolean) {
     const dialogRef = this.dialog.open(DialogTemplateComponent, {
-      disableClose: true, // Opcional: Para evitar cerrar la modal haciendo clic fuera de ella
+      width: '400px',
+      disableClose: true,
     });
+
+    dialogRef.componentInstance.setTitle(_enable? 'Habilitar ': 'Deshabilitar '+`${_user.NombreUsuario}`);
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
         // Bloquear la pantalla
         this.loading = true;
-        this.usuarioService.toggleUserStatus(_id, _enable).subscribe(
+        this.usuarioService.toggleUserStatus(_user.id, _enable).subscribe(
           (respuesta) => {
             console.log(respuesta);
             this.getUsersList(this.selected);

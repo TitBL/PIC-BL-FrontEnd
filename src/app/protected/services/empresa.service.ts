@@ -1,15 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Empresa, NewEmpresa, UpdateEmpresa, ViewEmpresa, ViewEmpresaSession } from '../interfaces/empresa';
-import { Observable, tap } from 'rxjs';
+import { Observable, catchError, tap } from 'rxjs';
 import { Response } from '../interfaces/response';
 import { MatDialog } from '@angular/material/dialog';
 import { EditEmpresaModalComponent } from '../pages/configuraciones/empresa/edit-empresa-modal/edit-empresa-modal.component';
 import { CommonService } from 'src/app/shared/common.service';
 import { ApiRoutes } from 'src/app/shared/api-routes';
 import { CryptoService } from './crypto.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { CommonModule } from '@angular/common';
+import { SessionVariables } from 'src/app/auth/enums/sessionVariables';
 
 @Injectable({
   providedIn: 'root'
@@ -44,14 +43,19 @@ export class EmpresaService {
           if (resp.Success) {
             this._business = resp.Data;
           }
-        })
+        }),
+        catchError(this.commonService.handleError)
       );
   }
 
   getBusinessById(_id: number): Observable<any> {
     const url = `${ApiRoutes.Business.Get_byId}/${_id}`;
     const headers = this.commonService.createHeaders();
-    return this.http.get<Response>(url, { headers });
+    return this.http.get<Response>(url, { headers })
+    .pipe(
+      tap(resp => {return resp}),
+      catchError(this.commonService.handleError)
+    );
   }
 
 
@@ -112,7 +116,10 @@ export class EmpresaService {
     }
     const url = ApiRoutes.Business.New;
     const headers = this.commonService.createHeaders();
-    return this.http.post(url, newEmpresa, { headers });
+    return this.http.post(url, newEmpresa, { headers }).pipe(
+      tap(resp => {return resp}),
+      catchError(this.commonService.handleError)
+    );
   }
   
   updateBusiness(empresa: Empresa): Observable<any> {
@@ -133,13 +140,21 @@ export class EmpresaService {
 
     const url =  `${ApiRoutes.Business.Update}/${_id}`;
     const headers = this.commonService.createHeaders();
-    return this.http.put(url, updateEmpresa, { headers });
+    return this.http.put(url, updateEmpresa, { headers })
+    .pipe(
+      tap(resp => {return resp}),
+      catchError(this.commonService.handleError)
+    );
   }
 
   getApiKey(): Observable<any> {
     const url = ApiRoutes.Business.Get_APIKey;
     const headers = this.commonService.createHeaders();
-    return this.http.get<Response>(url, { headers });
+    return this.http.get<Response>(url, { headers })
+    .pipe(
+      tap(resp => {return resp}),
+      catchError(this.commonService.handleError)
+    );
   }
 
   toggleBusinessStatus(_idEmpresa: number, enable: boolean): Observable<any> {
@@ -147,17 +162,21 @@ export class EmpresaService {
     const url = `${route}/${_idEmpresa}`;
     const headers = this.commonService.createHeaders();
     var body = {};
-    return this.http.post(url, body, { headers });
+    return this.http.post(url, body, { headers })
+    .pipe(
+      tap(resp => {return resp}),
+      catchError(this.commonService.handleError)
+    );
   }
 
   getBusinessOfUserSession(): ViewEmpresaSession[] {
-    const datosEnLocalStorage = localStorage.getItem('Empresas');
-    // Verificar si datosEnLocalStorage no es null antes de intentar desencriptar
-    if (datosEnLocalStorage !== null) {
-      let businessList = this.cryptoService.decrypt(datosEnLocalStorage);
+    const datosEnSessionStorage = sessionStorage.getItem(SessionVariables.Empresas);
+    // Verificar si datosEnSessionStorage no es null antes de intentar desencriptar
+    if (datosEnSessionStorage !== null) {
+      let businessList = this.cryptoService.decrypt(datosEnSessionStorage);
       return businessList;
     }
-    // Devolver vacio si datosEnLocalStorage es null
+    // Devolver vacio si datosEnSessionStorage es null
     return [];
   }
 

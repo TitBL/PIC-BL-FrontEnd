@@ -56,12 +56,12 @@
       </button>
 
       <button mat-icon-button *ngIf="cambiarEstadoEmpresa && selected === '1' " color="warn" matTooltip="Deshabilitar"
-        (click)="toggleBusinessStatusById(viewEmpresa.id, false)">
+        (click)="toggleBusinessStatusById(viewEmpresa, false)">
         <mat-icon fontIcon="delete"></mat-icon>
       </button>
 
       <button mat-icon-button *ngIf="cambiarEstadoEmpresa && selected ==='0'" class="btn_success" matTooltip="Habilitar"
-        (click)="toggleBusinessStatusById(viewEmpresa.id, true)">
+        (click)="toggleBusinessStatusById(viewEmpresa, true)">
         <mat-icon fontIcon="done"></mat-icon>
       </button>
     </td>

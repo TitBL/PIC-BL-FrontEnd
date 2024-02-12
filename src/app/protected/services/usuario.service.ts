@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ViewUsuario } from '../interfaces/usersession';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, tap } from 'rxjs';
 import { Response } from '../interfaces/response';
@@ -8,6 +8,7 @@ import { EditUsuarioModalComponent } from '../pages/configuraciones/usuario/edit
 import { CommonService } from 'src/app/shared/common.service';
 import { ApiRoutes } from 'src/app/shared/api-routes';
 import { CryptoService } from './crypto.service';
+import { SessionVariables } from 'src/app/auth/enums/sessionVariables';
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +61,7 @@ export class UsuarioService {
       data: { IsNew: _isNew, IdUsuario: _idUsuario }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.componentInstance.guardarUsuario.subscribe(result => {
       // Agrega el nuevo registro a tu fuente de datos
       console.log(result);
       if (_isNew) {
@@ -112,13 +113,11 @@ export class UsuarioService {
   };
 
   getIdUserSession(): number {
-    const datosEnLocalStorage = localStorage.getItem('IdUser');
-    // Verificar si datosEnLocalStorage no es null antes de intentar desencriptar
-    if (datosEnLocalStorage !== null) {
-      let idUser = this.cryptoService.decrypt(datosEnLocalStorage);
-      return idUser;
+    const datosEnSessionStorage = sessionStorage.getItem(SessionVariables.User);
+    if (datosEnSessionStorage !== null) {
+      let idUser = this.cryptoService.decrypt(datosEnSessionStorage);
+      return idUser['id'];
     }
-    // Devolver vacio si datosEnLocalStorage es null
     return -1;
   }
 }

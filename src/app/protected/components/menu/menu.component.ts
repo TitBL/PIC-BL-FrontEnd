@@ -49,7 +49,7 @@ export class MenuComponent implements OnInit {
   getUserSession() {
     this.authService.getUserSession().subscribe(
       (data) => {
-        this._userSession = data.Data;
+        this._userSession = data;
       },
       (error) => {
         console.error('Error fetching data:', error);

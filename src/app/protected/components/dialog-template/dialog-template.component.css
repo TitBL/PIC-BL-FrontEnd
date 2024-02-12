@@ -1,0 +1,12 @@
+/* Estilos personalizados para el diálogo */
+:host {
+    width: 600px; /* Ancho personalizado */
+  }
+  
+  mat-dialog-content {
+    padding: 20px; /* Espaciado interno personalizado */
+  }
+  
+  mat-dialog-actions {
+    justify-content: flex-end; /* Alineación de botones a la derecha */
+  }

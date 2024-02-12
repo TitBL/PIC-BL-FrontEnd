@@ -22,6 +22,8 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
 import { DocumentTypeSelectComponent } from './components/document-type-select/document-type-select.component';
 import { EmpresaSelectComponent } from './components/empresa-select/empresa-select.component';
 import { EstadoSelectComponent } from './components/estado-select/estado-select.component';
+import { PieChartComponent } from './components/pie-chart/pie-chart.component';
+import { EditRolModalComponent } from './pages/configuraciones/rol/edit-rol-modal/edit-rol-modal.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +46,8 @@ import { EstadoSelectComponent } from './components/estado-select/estado-select.
     DocumentTypeSelectComponent,
     EmpresaSelectComponent,
     EstadoSelectComponent,
+    PieChartComponent,
+    EditRolModalComponent,
   ],
   imports: [
     CommonModule,

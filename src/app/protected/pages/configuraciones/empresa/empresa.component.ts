@@ -70,7 +70,7 @@ export class EmpresaComponent implements OnInit, AfterViewInit {
    */
   ngOnInit(): void {
     this.getBusinessList(this.selected);
- 
+
     this.visualizarEmpresa = this.hasPermission(PermissionsEnum.VisualizarEmpresa);
     this.crearEmpresa = this.hasPermission(PermissionsEnum.CrearEmpresa);
     this.editarEmpresa = this.hasPermission(PermissionsEnum.EditarEmpresa);
@@ -96,7 +96,7 @@ export class EmpresaComponent implements OnInit, AfterViewInit {
           this.dataSource.data = ok.Data;
           this.applyFilter();
         } else {
-          this.commonService.notifyErrorResponse('Ha ocurrido un error en la consulta');
+          // this.commonService.notifyErrorResponse('Ha ocurrido un error en la consulta');
         }
       }).add(() => {
         // Desbloquear la pantalla cuando se complete la operación
@@ -116,7 +116,7 @@ export class EmpresaComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter() {
-      // Convertir la cadena de filtro a minúsculas para hacer una comparación sin distinción entre mayúsculas y minúsculas
+    // Convertir la cadena de filtro a minúsculas para hacer una comparación sin distinción entre mayúsculas y minúsculas
     const lowerCaseFilter = this.filterValue.trim().toLowerCase();
     // Aplicar el filtro a la fuente de datos
     this.dataSource.filter = lowerCaseFilter;
@@ -136,16 +136,17 @@ export class EmpresaComponent implements OnInit, AfterViewInit {
     this.empresaService.openNewEmpresaModal(this.isNew, this.idEmpresa);
   }
 
-  toggleBusinessStatusById(_id: number, _enable: boolean) {
+  toggleBusinessStatusById(_empresa: ViewEmpresa, _enable: boolean) {
     const dialogRef = this.dialog.open(DialogTemplateComponent, {
+      width: '400px', // Ajusta el tamaño según tus necesidades
       disableClose: true, // Opcional: Para evitar cerrar la modal haciendo clic fuera de ella
     });
-
+    dialogRef.componentInstance.setTitle(_enable? 'Habilitar ': 'Deshabilitar '+`${_empresa.nombre_comercial}`);
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
         // Bloquear la pantalla
         this.loading = true;
-        this.empresaService.toggleBusinessStatus(_id, _enable).subscribe(
+        this.empresaService.toggleBusinessStatus(_empresa.id, _enable).subscribe(
           (respuesta) => {
             this.commonService.notifySuccessResponse(respuesta.Message);
             this.getBusinessList(this.selected);

@@ -1,0 +1,51 @@
+<div class="p-xl-3 p-1" style="height: 80vh;">
+    <form (ngSubmit)="onSaveClick()" #empresaForm="ngForm" autocomplete="off">
+        <mat-dialog-content class="row">
+            <h2><mat-icon>{{ IsNew ? 'storefront' : 'edit' }}</mat-icon>
+                {{ IsNew ? 'Nuevo Rol' : 'Editar Rol - ' + rol.Nombre }}</h2>
+            <div class="row">
+                <!-- RAZON SOCIAL -->
+                <mat-form-field class="col-md-6 col-12">
+                    <mat-label>Nombre</mat-label>
+                    <input matInput placeholder="Nombre" name="nombre" [(ngModel)]="rol.Nombre" required
+                        maxlength="100">
+                </mat-form-field>
+                <!-- NOMBRE COMERCIAL -->
+                <mat-form-field class="col-md-6 col-12">
+                    <mat-label>Descripción</mat-label>
+                    <input matInput placeholder="Descripción" name="descripcion" [(ngModel)]="rol.Descripcion" required
+                        maxlength="100">
+                </mat-form-field>
+
+                <mat-tab-group mat-stretch-tabs="false" color="primary" mat-align-tabs="start">
+                    <div *ngFor="let module of getGroupedPermissionsKeys()">
+                        <mat-tab label="{{ module }}">
+                            <div style="height: 30vh;">
+                                <div *ngFor="let permission of groupedPermissions[module]">
+                                    <mat-checkbox class="col-md-6 col-12"
+                                        [checked]="checkedPermissions.includes(permission.id)"
+                                        (change)="onCheckboxChange(permission.id)">
+                                        {{ permission.permiso }}
+                                    </mat-checkbox>
+                                </div>
+                            </div>
+                        </mat-tab>
+                    </div>
+                </mat-tab-group>
+
+            </div>
+
+
+
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <div class="button-container">
+                <button mat-raised-button color="primary" type="submit" [disabled]="empresaForm.invalid"
+                    [mat-dialog-close]="true">Guardar</button>
+                <button mat-raised-button color="accent" mat-dialog-close>Cancel</button>
+            </div>
+        </mat-dialog-actions>
+    </form>
+</div>
+
+<app-spinner [loading]="loading"></app-spinner>

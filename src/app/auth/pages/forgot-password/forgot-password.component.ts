@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
+import { CommonService } from 'src/app/shared/common.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-forgot-password',
@@ -7,38 +10,48 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./forgot-password.component.css']
 })
 export class ForgotPasswordComponent {
-  public _loading: boolean = false;
+  public loading: boolean = false;
   registroForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,  
+    private authService: AuthService, 
+    private router: Router,
+    private commonService: CommonService) {
     this.registroForm = this.fb.group({
-      cedula: ['', [Validators.required, Validators.maxLength(20)]],
-      nombreUsuario: ['', [Validators.required, Validators.maxLength(50)]],
-      email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
-      contrasena: ['', [Validators.required, Validators.minLength(10), this.complexPasswordValidator]],
-      repetirContrasena: ['', [Validators.required]],
-      aceptacionConsentimiento: [false, [Validators.requiredTrue]]
+      cedula: ['', [Validators.required, Validators.maxLength(20)]]
     });
    }
-
-   // Método para validar complejidad de contraseña
-  complexPasswordValidator(control: { value: any; }) {
-    const value = control.value;
-    const hasNumber = /[0-9]/.test(value);
-    const hasUpperCase = /[A-Z]/.test(value);
-    const hasLowerCase = /[a-z]/.test(value);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
-
-    const valid = hasNumber && hasUpperCase && hasLowerCase && hasSpecialChar;
-
-    return valid ? null : { passwordRequirements: true };
-  }
   
   // Método para enviar el formulario
   onSubmit() {
     if (this.registroForm.valid) {
       // Lógica para enviar los datos a la base de datos
       console.log(this.registroForm.value);
+      this.loading = true;
+
+    const {cedula}  = this.registroForm.value;
+
+    this.authService.resetPassword(cedula)
+      .subscribe(
+        (ok) => {
+          // Successful login
+          if (ok === true) {
+            this.router.navigateByUrl('/auth');
+            this.commonService.notifySuccessResponse('¡Se ha enviado exitosamente una contraseña temporal a su correo!');
+          } else {
+            console.error('Error:', ok);
+            // this.commonService.notifyErrorResponse('Credenciales incorrectas');
+          }
+        },
+        (error) => {
+          // Handle connection error
+          console.log('ERROR LOGIN: ', error);
+          this.commonService.notifyErrorResponse('Ocurrió un error');
+          //console.error('Error LOGIN:', error);
+          this.loading = false; // Desbloquear la pantalla cuando se complete la operación
+        },
+        () => this.loading = false // Desbloquear la pantalla cuando se complete la operación
+      );
     }
   }
 }

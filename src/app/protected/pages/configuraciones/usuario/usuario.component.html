@@ -49,12 +49,12 @@
       </button>
 
       <button mat-icon-button *ngIf="cambiarEstadoUsuario && selected === '1' && viewUsuario.Rol !== 'Master'" color="warn" matTooltip="Deshabilitar"
-        (click)="toggleUserStatusById(viewUsuario.id, false)">
+        (click)="toggleUserStatusById(viewUsuario, false)">
         <mat-icon fontIcon="delete"></mat-icon>
       </button>
 
       <button mat-icon-button *ngIf="cambiarEstadoUsuario && selected ==='0' && viewUsuario.Rol !== 'Master'" class="btn_success" matTooltip="Habilitar"
-        (click)="toggleUserStatusById(viewUsuario.id, true)">
+        (click)="toggleUserStatusById(viewUsuario, true)">
         <mat-icon fontIcon="done"></mat-icon>
       </button>
     </td>
