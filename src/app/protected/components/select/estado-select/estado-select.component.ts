@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { EstadosEnum } from '../../enums/estados.enum';
+import { EstadosEnum } from '../../../enums/estados.enum';
 
 @Component({
   selector: 'app-estado-select',

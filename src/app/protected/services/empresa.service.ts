@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Empresa, NewEmpresa, UpdateEmpresa, ViewEmpresa, ViewEmpresaSession } from '../interfaces/empresa';
-import { Observable, catchError, tap } from 'rxjs';
+import { Observable, Subject, catchError, tap } from 'rxjs';
 import { Response } from '../interfaces/response';
 import { MatDialog } from '@angular/material/dialog';
 import { EditEmpresaModalComponent } from '../pages/configuraciones/empresa/edit-empresa-modal/edit-empresa-modal.component';
@@ -15,7 +15,7 @@ import { SessionVariables } from 'src/app/auth/enums/sessionVariables';
 })
 export class EmpresaService {
   private _business!: ViewEmpresa[];
-
+  private businessSavedSubject = new Subject<void>();
   /**
    * Getter for the list of businesses.
    */
@@ -73,6 +73,8 @@ export class EmpresaService {
         this.createNewBusiness(nuevoRegistro).subscribe(
           (respuesta) => {
             console.log(respuesta);
+            // Emitir evento cuando se guarda un nuevo rol
+            this.businessSavedSubject.next();
             this.commonService.notifySuccessResponse(respuesta.Message);
           },
           (error) => {
@@ -84,6 +86,8 @@ export class EmpresaService {
         this.updateBusiness(nuevoRegistro).subscribe(
           (respuesta) => {
             console.log(respuesta);
+             // Emitir evento cuando se guarda un nuevo rol
+             this.businessSavedSubject.next();
             this.commonService.notifySuccessResponse(respuesta.Message);
           },
           (error) => {
@@ -96,6 +100,11 @@ export class EmpresaService {
      
       // Puedes utilizar MatTableDataSource y llamar a .data para actualizar la tabla
     });
+  }
+
+   // Método para permitir que otros componentes se suscriban al evento de guardado de rol
+   onBusinessSaved() {
+    return this.businessSavedSubject.asObservable();
   }
 
   createNewBusiness(empresa: Empresa): Observable<any> {

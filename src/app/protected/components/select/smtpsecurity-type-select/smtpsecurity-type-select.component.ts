@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { SMTPSecurityTypeEnum } from '../../enums/SMTPSecurityType.enum';
+import { SMTPSecurityTypeEnum } from '../../../enums/SMTPSecurityType.enum';
 
 @Component({
   selector: 'app-smtpsecurity-type-select',

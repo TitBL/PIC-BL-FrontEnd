@@ -23,7 +23,7 @@
     (guardarUsuario)="guardarUsuario($event)"></app-edit-usuario-modal>
 </div>
 
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 responsive-table" matSort matPaginator>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 responsive-table" matSort matPaginator *ngIf="visualizarUsuario">
 
   <ng-container matColumnDef="NombreUsuario">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre Usuario </th>
@@ -64,7 +64,7 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
-
 <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+
 
 <app-spinner [loading]="loading"></app-spinner>

@@ -7,55 +7,61 @@
     </mat-toolbar>
 
 
-    <mat-expansion-panel hideToggle class="mb-1">
+    <mat-expansion-panel hideToggle class="mb-1" *ngIf="configuracionesModule">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon class="me-2">settings</mat-icon>
           Configuraciones
         </mat-panel-title>
       </mat-expansion-panel-header>
-        <a class="menuItem" mat-flat-button
+
+      <a class="menuItem" mat-flat-button *ngIf="generalSection"
         href="{{PATH_Configuraciones.General.path}}">{{PATH_Configuraciones.General.name}}</a>
-        <a class="menuItem" mat-flat-button
+      <a class="menuItem" mat-flat-button *ngIf="empresaSection"
         href="{{PATH_Configuraciones.Empresa.path}}">{{PATH_Configuraciones.Empresa.name}}</a>
-        <a class="menuItem" mat-flat-button 
+      <a class="menuItem" mat-flat-button *ngIf="usuarioSection"
         href="{{PATH_Configuraciones.Usuario.path}}">{{PATH_Configuraciones.Usuario.name}}</a>
-        <a class="menuItem" mat-flat-button 
+      <a class="menuItem" mat-flat-button *ngIf="rolesSection"
         href="{{PATH_Configuraciones.Roles.path}}">{{PATH_Configuraciones.Roles.name}}</a>
-        
+
     </mat-expansion-panel>
 
 
-    <mat-expansion-panel hideToggle class="mb-1">
+    <mat-expansion-panel hideToggle class="mb-1" *ngIf="misDocumentosModule">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon class="me-2" fontIcon="folder_open"></mat-icon>
           Mis Documentos
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <a class="menuItem" mat-flat-button href="{{PATH_MisDocumentos.Recibidos.path}}">{{PATH_MisDocumentos.Recibidos.name}}</a>
+      <a class="menuItem" mat-flat-button *ngIf="misDocRecibidosSection"
+        href="{{PATH_MisDocumentos.Recibidos.path}}">{{PATH_MisDocumentos.Recibidos.name}}</a>
     </mat-expansion-panel>
 
-    <mat-expansion-panel hideToggle class="mb-1">
+    <mat-expansion-panel hideToggle class="mb-1" *ngIf="documentosEmpresaModule">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon class="me-2" fontIcon="file_copy"></mat-icon>
           Documentos Empresa
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <a class="menuItem" mat-flat-button href="{{PATH_DocumentosEmpresa.Recibidos.path}}">{{PATH_DocumentosEmpresa.Recibidos.name}}</a>
-      <a class="menuItem" mat-flat-button href="{{PATH_DocumentosEmpresa.Emitidos.path}}">{{PATH_DocumentosEmpresa.Emitidos.name}}</a>
+      <a class="menuItem" mat-flat-button *ngIf="docEmpresaRecibidosSection"
+        href="{{PATH_DocumentosEmpresa.Recibidos.path}}">{{PATH_DocumentosEmpresa.Recibidos.name}}</a>
+      <a class="menuItem" mat-flat-button *ngIf="docEmpresaEmitidosSection"
+        href="{{PATH_DocumentosEmpresa.Emitidos.path}}">{{PATH_DocumentosEmpresa.Emitidos.name}}</a>
     </mat-expansion-panel>
 
-    <mat-expansion-panel hideToggle class="mb-1">
+    <mat-expansion-panel hideToggle class="mb-1" *ngIf="reportesModule">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon class="me-2" fontIcon="print_connect"></mat-icon>
           Reportes
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <a class="menuItem" mat-flat-button href="/historial">Emitidos1</a>
-      <a class="menuItem" mat-flat-button href="/cita">Emitidos2</a>
+      <a class="menuItem" mat-flat-button *ngIf="reportes1Section"
+      href="/">Emitidos1</a>
+      <a class="menuItem" mat-flat-button *ngIf="reportes2Section"
+      href="/">Emitidos2</a>
     </mat-expansion-panel>
 
 
@@ -77,16 +83,16 @@
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <div class="container">
-        <mat-icon class="navbar-brand me-2">business</mat-icon>
-        <span *ngIf="_userSession" class="me-auto mb-2 mb-lg-0">{{_userSession.NombreCompleto}}</span>
         <span class="example-spacer"></span>
         <div style="padding: 5px; margin: 2%;">
           <!-- <span>{{MySession().usuario}}</span> -->
-
+          
           <span>
             <!-- {{MySession().usuario}} -->
           </span>
-
+          
+          <mat-icon class="navbar-brand me-2">business</mat-icon>
+          <span *ngIf="_userSession" class="me-auto mb-2 mb-lg-0">{{_userSession.NombreCompleto}}</span>
           <!-- <span>{{MySession().avatar}}</span> -->
           <!-- aqui va el diseño para mostrar el usuario las variables son
               showSession par mostrar
@@ -95,7 +101,7 @@
             role  rol del usuario-->
         </div>
 
-       
+
       </div>
     </mat-toolbar>
 

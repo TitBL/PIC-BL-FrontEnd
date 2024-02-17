@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
-import { ViewEmpresaSession } from '../../interfaces/empresa';
-import { EmpresaService } from '../../services/empresa.service';
+import { ViewEmpresaSession } from '../../../interfaces/empresa';
+import { EmpresaService } from '../../../services/empresa.service';
 
 @Component({
   selector: 'app-empresa-select',

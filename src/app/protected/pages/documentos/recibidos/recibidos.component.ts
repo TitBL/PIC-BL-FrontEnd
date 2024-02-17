@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { PdfViewerComponent } from 'src/app/protected/components/pdf-viewer/pdf-viewer.component';
 import { PermissionsEnum } from 'src/app/protected/enums/permissions.enum';
 import { ViewDocumentReceived } from 'src/app/protected/interfaces/documento';
@@ -48,16 +48,23 @@ export class RecibidosComponent implements OnInit, AfterViewInit {
     private permissionsService: PermissionsService,
     private commonService: CommonService,
     private dialog: MatDialog,
-    private usuarioService: UsuarioService) { }
+    private usuarioService: UsuarioService,
+    private router: Router) { }
   /**
 * Initializes the component and retrieves the list of issued documents for the business.
 */
   ngOnInit(): void {
-    this.idUserSession = this.usuarioService.getIdUserSession();
+    //#region PERMISOS
     this.visualizarDocumentos = this.hasPermission(PermissionsEnum.VisualizarDocumentosRecibidos);
     this.descargarDocumentos = this.hasPermission(PermissionsEnum.DescargarDocumentosRecibidos);
     this.reenviarDocumentos = this.hasPermission(PermissionsEnum.EnviarPorEmailDocumentosRecibidos);
-    this.searchDocuments();
+    //#endregion
+    if (this.visualizarDocumentos) {
+      this.idUserSession = this.usuarioService.getIdUserSession();
+      this.searchDocuments();
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   ngAfterViewInit(): void {

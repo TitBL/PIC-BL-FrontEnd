@@ -15,15 +15,16 @@ import { GeneralComponent } from './pages/configuraciones/general/general.compon
 import { UsuarioComponent } from './pages/configuraciones/usuario/usuario.component';
 import { EditUsuarioModalComponent } from './pages/configuraciones/usuario/edit-usuario-modal/edit-usuario-modal.component';
 import { HistogramComponent } from './components/histogram/histogram.component';
-import { SMTPSecurityTypeSelectComponent } from './components/smtpsecurity-type-select/smtpsecurity-type-select.component';
+import { SMTPSecurityTypeSelectComponent } from './components/select/smtpsecurity-type-select/smtpsecurity-type-select.component';
 import { DialogTemplateComponent } from './components/dialog-template/dialog-template.component';
 import { PdfViewerComponent } from './components/pdf-viewer/pdf-viewer.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
-import { DocumentTypeSelectComponent } from './components/document-type-select/document-type-select.component';
-import { EmpresaSelectComponent } from './components/empresa-select/empresa-select.component';
-import { EstadoSelectComponent } from './components/estado-select/estado-select.component';
+import { DocumentTypeSelectComponent } from './components/select/document-type-select/document-type-select.component';
+import { EmpresaSelectComponent } from './components/select/empresa-select/empresa-select.component';
+import { EstadoSelectComponent } from './components/select/estado-select/estado-select.component';
 import { PieChartComponent } from './components/pie-chart/pie-chart.component';
 import { EditRolModalComponent } from './pages/configuraciones/rol/edit-rol-modal/edit-rol-modal.component';
+import { RolSelectComponent } from './components/select/rol-select/rol-select.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { EditRolModalComponent } from './pages/configuraciones/rol/edit-rol-moda
     EstadoSelectComponent,
     PieChartComponent,
     EditRolModalComponent,
+    RolSelectComponent,
   ],
   imports: [
     CommonModule,

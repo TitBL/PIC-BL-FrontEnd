@@ -7,13 +7,15 @@
                 <!-- RAZON SOCIAL -->
                 <mat-form-field class="col-md-6 col-12">
                     <mat-label>Nombre</mat-label>
-                    <input matInput placeholder="Nombre" name="nombre" [(ngModel)]="rol.Nombre" required
+                    <input matInput placeholder="Nombre" name="nombre" 
+                    [(ngModel)]="rol.Nombre" required
                         maxlength="100">
                 </mat-form-field>
                 <!-- NOMBRE COMERCIAL -->
                 <mat-form-field class="col-md-6 col-12">
                     <mat-label>Descripción</mat-label>
-                    <input matInput placeholder="Descripción" name="descripcion" [(ngModel)]="rol.Descripcion" required
+                    <input matInput placeholder="Descripción" name="descripcion" 
+                    [(ngModel)]="rol.Descripcion" required
                         maxlength="100">
                 </mat-form-field>
 
@@ -41,8 +43,8 @@
         <mat-dialog-actions align="end">
             <div class="button-container">
                 <button mat-raised-button color="primary" type="submit" [disabled]="empresaForm.invalid"
-                    [mat-dialog-close]="true">Guardar</button>
-                <button mat-raised-button color="accent" mat-dialog-close>Cancel</button>
+                    [mat-dialog-close]="true">Guardar Rol</button>
+                <button mat-raised-button color="accent" type="button" mat-dialog-close>Cancelar</button>
             </div>
         </mat-dialog-actions>
     </form>

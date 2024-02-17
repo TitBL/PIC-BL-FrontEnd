@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { DialogTemplateComponent } from 'src/app/protected/components/dialog-template/dialog-template.component';
 import { EstadosEnum } from 'src/app/protected/enums/estados.enum';
 import { PermissionsEnum } from 'src/app/protected/enums/permissions.enum';
@@ -49,18 +50,25 @@ export class UsuarioComponent implements OnInit, AfterViewInit {
   constructor(private usuarioService: UsuarioService,
     private permissionsService: PermissionsService,
     private dialog: MatDialog,
-    public commonService: CommonService) { }
+    public commonService: CommonService,
+    private router: Router) { }
 
   /**
   * Initializes the component and sets the initial values for permissions and business list.
   */
   ngOnInit(): void {
-    this.getUsersList(this.selected);
+    //#region PERMISOS
     this.visualizarUsuario = this.hasPermission(PermissionsEnum.VisualizarUsuario);
     this.crearUsuario = this.hasPermission(PermissionsEnum.CrearUsuario);
     this.editarUsuario = this.hasPermission(PermissionsEnum.EditarUsuario);
     this.cambiarEstadoUsuario = this.hasPermission(PermissionsEnum.HabilitarDeshabilitarUsuario);
     this.asignarEmpresasAUsuario = this.hasPermission(PermissionsEnum.AsignarEmpresasAUsuario);
+  //#endregion
+  if (this.visualizarUsuario) {
+    this.getUsersList(this.selected);
+  } else {
+    this.router.navigate(['/']);
+  }
   }
 
   ngAfterViewInit(): void {

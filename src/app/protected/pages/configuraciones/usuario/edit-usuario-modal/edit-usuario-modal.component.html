@@ -1,82 +1,77 @@
 <div class="p-xl-3 p-1" style="height: 80vh;">
-    <form (ngSubmit)="onSubmit()" #usuarioForm="ngForm" autocomplete="off">
+    <form (ngSubmit)="onSaveUserClick()" #usuarioForm="ngForm" autocomplete="off">
         <mat-dialog-content class="row">
             <h2><mat-icon>{{ IsNew ? 'group' : 'edit' }}</mat-icon>
                 {{ IsNew ? 'Nuevo Usuario' : 'Editar Usuario - ' + usuario.NombreCompleto }}</h2>
             <!-- Campos del formulario -->
             <mat-tab-group mat-stretch-tabs="false" color="primary" mat-align-tabs="start">
                 <mat-tab label="General">
-                    <div class="row mt-2 p-3">
+                    <div class="row mt-2" style="height: 42vh; width: 100%;">
 
-                        <mat-form-field>
+                        <mat-form-field class="col-md-6 col-12 px-3">
                             <mat-label>Cédula - DNI - RUC</mat-label>
-                            <input matInput placeholder="Cédula - DNI - RUC" [(ngModel)]="usuario.DNI" disabled="{{!IsNew}}"
-                             required maxlength="20">
+                            <input matInput placeholder="Cédula - DNI - RUC" [(ngModel)]="usuario.DNI" name="cedula"
+                                disabled="{{!IsNew}}" required maxlength="20">
                         </mat-form-field>
-        
-                        <mat-form-field class="col-6">
-                            <mat-label>Nombres</mat-label>
-                            <input matInput placeholder="Nombre" [(ngModel)]="usuario.NombreCompleto" required
-                            maxlength="100">
-                        </mat-form-field>
-        
-                        <mat-form-field class="col-6">
-                            <mat-label>Apellidos</mat-label>
-                            <input matInput placeholder="Apellido" [(ngModel)]="usuario.NombreCompleto" required
-                            maxlength="100">
-                        </mat-form-field>
-        
-                        <mat-form-field class="col-6">
-                            <mat-label>Rol</mat-label>
-                            <mat-select formControlName="rol" required>
-                                <mat-option *ngFor="let rol of roles" [value]="rol.value">{{ rol.label }}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-        
-                        <mat-form-field class="col-6">
+
+                        <mat-form-field class="col-md-6 col-12 px-3">
                             <mat-label>Nombre de Usuario</mat-label>
-                            <input matInput placeholder="nombreUsuario" [(ngModel)]="usuario.NombreUsuario" required>
+                            <input matInput placeholder="nombreUsuario" name="nombreUsuario"
+                                [(ngModel)]="usuario.NombreUsuario" required>
                         </mat-form-field>
-        
-                        <mat-form-field class="col-6">
-                            <mat-label>Contraseña</mat-label>
-                            <input matInput placeholder="Contraseña" type="password" [(ngModel)]="usuario.Contrasena">
+
+                        <mat-form-field class="col-md-6 col-12 px-3">
+                            <mat-label>Apellidos y Nombres</mat-label>
+                            <input matInput placeholder="Apellidos y Nombres" name="nombreCompleto" [(ngModel)]="usuario.NombreCompleto"
+                                required maxlength="100">
                         </mat-form-field>
-                        
-                        <mat-form-field class="col-6">
-                            <mat-label>Repetir Contraseña</mat-label>
-                            <input matInput placeholder="Repetir Contraseña" type="password" formControlName="repetirContrasena">
+
+                        <div class="col-md-6 col-12 px-3">
+                            <app-rol-select (rolSelected)="onRolSelected($event)" name="roles" [required]="true" [preselectedRol]="usuario.IdRol"></app-rol-select>
+                        </div>
+
+                        <mat-form-field class="col-md-6 col-12 px-3">
+                            <mat-label>Dirección</mat-label>
+                            <input matInput placeholder="Dirección" name="direccion" [(ngModel)]="usuario.Direccion" required>
                         </mat-form-field>
-                    
-                        <mat-form-field class="col-6">
+
+                        <mat-form-field class="col-md-6 col-12 px-3">
                             <mat-label>Email</mat-label>
-                          <input matInput placeholder="Email" [(ngModel)]="usuario.Email">
+                            <input matInput placeholder="Email" name="email" type="email" [(ngModel)]="usuario.Email" required>
                         </mat-form-field>
-    
+
+                        <mat-form-field class="col-md-6 col-12 px-3">
+                            <mat-label>Contraseña</mat-label>
+                            <input matInput placeholder="Contraseña" name="contrasena" type="password"
+                                [(ngModel)]="usuario.Contrasena" required>
+                        </mat-form-field>
+
+                        <mat-form-field class="col-md-6 col-12 px-3">
+                            <mat-label>Repetir Contraseña</mat-label>
+                            <input matInput placeholder="Repetir Contraseña" type="password"
+                                [(ngModel)]="repetirContrasena" name="repetirContrasena" required>
+                        </mat-form-field>
                     </div>
                 </mat-tab>
                 <mat-tab label="Empresas">
-                    
-                    <mat-checkbox *ngFor="let item of businessList" class="col-4" >
-                        {{ item.nombreComercial }}
-                      </mat-checkbox>
-                   
-
+                    <div class="row mt-2" style="height: 42vh; width: 100%;">
+                        <mat-checkbox *ngFor="let business of businessList" class="col-4"
+                            [checked]="checkedBusiness.includes(business.id)" (change)="onCheckboxChange(business.id)">
+                            {{ business.nombreComercial }}
+                        </mat-checkbox>
+                    </div>
                 </mat-tab>
-              </mat-tab-group>
-
-
-           
+            </mat-tab-group>
 
         </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <div class="button-container">
+                <button mat-raised-button type="submit" color="primary" [disabled]="usuarioForm.invalid"
+                [mat-dialog-close]="true">Guardar Usuario</button>
+                <button mat-raised-button type="button" color="accent" mat-dialog-close>Cancelar</button>
+            </div>
+        </mat-dialog-actions>
     </form>
-    <mat-dialog-actions align="end" >
-        <div class="button-container">
-            <button mat-raised-button type="submit" color="primary" [disabled]="crearUsuarioForm.invalid"
-                [mat-dialog-close]="true">Crear Usuario</button>
-            <button mat-raised-button type="button" color="accent" mat-dialog-close>Cancelar</button>
-        </div>
-    </mat-dialog-actions>
 </div>
 
 <app-spinner [loading]="loading"></app-spinner>

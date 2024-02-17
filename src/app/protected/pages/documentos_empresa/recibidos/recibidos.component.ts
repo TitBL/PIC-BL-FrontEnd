@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { PdfViewerComponent } from 'src/app/protected/components/pdf-viewer/pdf-viewer.component';
 import { PermissionsEnum } from 'src/app/protected/enums/permissions.enum';
 import { ViewDocumentReceived } from 'src/app/protected/interfaces/documento';
@@ -45,16 +45,22 @@ export class RecibidosEmpresaComponent implements OnInit, AfterViewInit {
   constructor(private documentoService: DocumentoService,
     private permissionsService: PermissionsService,
     private commonService: CommonService,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private router: Router) { }
   /**
 * Initializes the component and retrieves the list of issued documents for the business.
 */
   ngOnInit(): void {
+    //#region PERMISOS
     this.visualizarDocumentos = this.hasPermission(PermissionsEnum.VisualizarDocumentosEmpresasRecibidos);
     this.descargarDocumentos = this.hasPermission(PermissionsEnum.DescargarDocumentosEmpresasRecibidos);
     this.reenviarDocumentos = this.hasPermission(PermissionsEnum.EnviarPorEmailDocumentosEmpresasRecibidos);
-    this.searchDocuments();
-    //this.getDocumentIssuedBusinessList(this.selectedBusiness, "2023-01-01", "2023-12-31");
+   //#endregion
+    if (this.visualizarDocumentos) {
+      this.searchDocuments();
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   ngAfterViewInit(): void {

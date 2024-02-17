@@ -1,20 +1,22 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Permissions } from '../interfaces/permiso';
-import { Observable, catchError, tap } from 'rxjs';
+import { Observable, Subject, catchError, tap } from 'rxjs';
 import { Response } from '../interfaces/response';
 import { ApiRoutes } from 'src/app/shared/api-routes';
 import { CommonService } from 'src/app/shared/common.service';
 import { EditRolModalComponent } from '../pages/configuraciones/rol/edit-rol-modal/edit-rol-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { NewRol, Rol, UpdateRol } from '../interfaces/rol';
+import { NewRol, UpdateRol } from '../interfaces/rol';
+import { CryptoService } from './crypto.service';
+import { SessionVariables } from 'src/app/auth/enums/sessionVariables';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RolService {
   private _permissions!: Permissions[];
-
+  private rolSavedSubject = new Subject<void>();
   /**
     * Getter for the list of permissions.
     */
@@ -24,7 +26,8 @@ export class RolService {
 
   constructor(private http: HttpClient,
     private dialog: MatDialog,
-    private commonService: CommonService) { }
+    private commonService: CommonService,
+    private cryptoService: CryptoService) { }
 
   /**
    * Retrieves the list of permissions.
@@ -73,6 +76,8 @@ export class RolService {
           (respuesta) => {
             console.log(respuesta);
             this.commonService.notifySuccessResponse(respuesta.Message);
+            // Emitir evento cuando se guarda un nuevo rol
+            this.rolSavedSubject.next();
           },
           (error) => {
             console.error('Error:', error);
@@ -84,6 +89,8 @@ export class RolService {
           (respuesta) => {
             console.log(respuesta);
             this.commonService.notifySuccessResponse(respuesta.Message);
+            // Emitir evento cuando se guarda un nuevo rol
+            this.rolSavedSubject.next();
           },
           (error) => {
             console.error('Error:', error);
@@ -95,6 +102,11 @@ export class RolService {
 
       // Puedes utilizar MatTableDataSource y llamar a .data para actualizar la tabla
     });
+  }
+
+  // Método para permitir que otros componentes se suscriban al evento de guardado de rol
+  onRolSaved() {
+    return this.rolSavedSubject.asObservable();
   }
 
   createNewRol(rol: UpdateRol): Observable<any> {
@@ -139,6 +151,15 @@ export class RolService {
         tap(resp => { return resp }),
         catchError(this.commonService.handleError)
       );
+  }
+
+  isUserSessionMaster() :boolean {
+    const datosEnSessionStorage = sessionStorage.getItem(SessionVariables.User);
+    if (datosEnSessionStorage !== null) {
+      let user = this.cryptoService.decrypt(datosEnSessionStorage);
+      return user.IdRol === '1' ? true: false;
+    }
+    return false;
   }
 
 }

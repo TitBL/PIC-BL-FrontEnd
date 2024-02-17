@@ -27,8 +27,11 @@ export class GeneralComponent implements OnInit {
     public commonService: CommonService) { }
 
   ngOnInit(): void {
+
+    
     // Puedes cargar los parámetros existentes al iniciar el componente si es necesario
     this.loadParametros();
+
   }
 
   loadParametros() {

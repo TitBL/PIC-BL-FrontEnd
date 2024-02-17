@@ -15,7 +15,7 @@ export class CommonService {
   private session = sessionStorage.getItem(SessionVariables.Session);
 
   constructor(private _snackBar: MatSnackBar,
-    private router: Router,) { }
+    private router: Router) { }
 
   /**
    * Creates HttpHeaders with the authorization token and session ID.
@@ -112,4 +112,6 @@ export class CommonService {
     this.router.navigate(['/auth']);
     return of(null);
   }
+
+   
 }

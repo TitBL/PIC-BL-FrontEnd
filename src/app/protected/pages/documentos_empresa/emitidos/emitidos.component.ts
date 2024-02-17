@@ -1,12 +1,10 @@
-import { HttpResponse } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { PdfViewerComponent } from 'src/app/protected/components/pdf-viewer/pdf-viewer.component';
-import { DocumentTypeEnum } from 'src/app/protected/enums/documentType.enum';
 import { PermissionsEnum } from 'src/app/protected/enums/permissions.enum';
 import { ViewDocumentIssued } from 'src/app/protected/interfaces/documento';
 import { DocumentoService } from 'src/app/protected/services/documento.service';
@@ -47,16 +45,23 @@ export class EmitidosEmpresaComponent implements OnInit, AfterViewInit {
   constructor(private documentoService: DocumentoService,
     private permissionsService: PermissionsService,
     private commonService: CommonService,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private router: Router) { }
 
   /**
   * Initializes the component and retrieves the list of issued documents for the business.
   */
   ngOnInit(): void {
+    //#region PERMISOS
     this.visualizarDocumentos = this.hasPermission(PermissionsEnum.VisualizarDocumentosEmpresasEmitidos);
     this.descargarDocumentos = this.hasPermission(PermissionsEnum.DescargarDocumentosEmpresasEmitidos);
     this.reenviarDocumentos = this.hasPermission(PermissionsEnum.ReenviarPorEmailDocumentosEmpresasEmitidos);
-    this.searchDocuments();
+    //#endregion
+    if (this.visualizarDocumentos) {
+      this.searchDocuments();
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   ngAfterViewInit(): void {

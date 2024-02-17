@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { DocumentTypeEnum } from '../../enums/documentType.enum';
+import { DocumentTypeEnum } from '../../../enums/documentType.enum';
 
 @Component({
   selector: 'app-document-type-select',

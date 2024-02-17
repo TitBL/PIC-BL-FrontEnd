@@ -115,10 +115,12 @@ export class UsuarioService {
   getIdUserSession(): number {
     const datosEnSessionStorage = sessionStorage.getItem(SessionVariables.User);
     if (datosEnSessionStorage !== null) {
-      let idUser = this.cryptoService.decrypt(datosEnSessionStorage);
-      return idUser['id'];
+      let user = this.cryptoService.decrypt(datosEnSessionStorage);
+      return user['id'];
     }
     return -1;
   }
+
+
 }
 

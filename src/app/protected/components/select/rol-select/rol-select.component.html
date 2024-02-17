@@ -1,0 +1,12 @@
+<mat-form-field [ngClass]="classes" appearance="fill" style="width: 100%;">
+    <mat-label>Roles</mat-label>
+    <mat-select [(ngModel)]="selectedRol" 
+                (ngModelChange)="onRolChange()"
+                placeholder="Roles"
+                name="{{name}}" 
+                [required]="required">
+        <mat-option *ngFor="let type of rolesList" [value]="type.id">
+            {{ type.Nombre }}
+        </mat-option>
+    </mat-select>
+</mat-form-field>

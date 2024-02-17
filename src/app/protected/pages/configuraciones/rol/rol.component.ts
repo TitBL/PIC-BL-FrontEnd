@@ -1,14 +1,11 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { RolService } from '../../../services/rol.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { EstadosEnum } from 'src/app/protected/enums/estados.enum';
 import { Rol } from 'src/app/protected/interfaces/rol';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { DialogTemplateComponent } from 'src/app/protected/components/dialog-template/dialog-template.component';
 import { MatDialog } from '@angular/material/dialog';
-import { NewRol } from '../../../interfaces/rol';
 import { CommonService } from 'src/app/shared/common.service';
 
 @Component({
@@ -38,7 +35,12 @@ export class RolComponent implements OnInit, AfterViewInit {
     public commonService: CommonService) { }
 
   ngOnInit(): void {
+    
     this.getRolesList(this.selected);
+     // Suscribirse al evento de guardado de rol
+     this.rolService.onRolSaved().subscribe(() => {
+      this.getRolesList(this.selected); // Recargar los datos de la tabla
+    });
   }
 
   ngAfterViewInit(): void {

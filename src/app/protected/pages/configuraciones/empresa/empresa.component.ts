@@ -9,6 +9,7 @@ import { DialogTemplateComponent } from 'src/app/protected/components/dialog-tem
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-empresa',
@@ -61,20 +62,30 @@ export class EmpresaComponent implements OnInit, AfterViewInit {
 
 
   constructor(private empresaService: EmpresaService,
-    private permissionsService: PermissionsService,
     private dialog: MatDialog,
-    public commonService: CommonService) { }
+    public commonService: CommonService,
+    private permissionsService: PermissionsService,
+    private router: Router) { }
 
   /**
    * Initializes the component and sets the initial values for permissions and business list.
    */
   ngOnInit(): void {
-    this.getBusinessList(this.selected);
-
+    //#region PERMISOS
     this.visualizarEmpresa = this.hasPermission(PermissionsEnum.VisualizarEmpresa);
     this.crearEmpresa = this.hasPermission(PermissionsEnum.CrearEmpresa);
     this.editarEmpresa = this.hasPermission(PermissionsEnum.EditarEmpresa);
     this.cambiarEstadoEmpresa = this.hasPermission(PermissionsEnum.HabilitarDeshabilitarEmpresa);
+    //#endregion
+    if (this.visualizarEmpresa) {
+      this.getBusinessList(this.selected);
+      // Suscribirse al evento de guardado de rol
+      this.empresaService.onBusinessSaved().subscribe(() => {
+        this.getBusinessList(this.selected); // Recargar los datos de la tabla
+      });
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -104,7 +115,14 @@ export class EmpresaComponent implements OnInit, AfterViewInit {
       });
   }
 
-
+  /**
+    * Checks if the user has the specified permission.
+    * @param permisoId The ID of the permission to check.
+    * @returns True if the user has the permission, otherwise false.
+    */
+  hasPermission(permisoId: number): boolean {
+    return this.permissionsService.hasPermission(permisoId);
+  }
 
   /**
   * Handles the change event of the state dropdown and retrieves the filtered business list.
@@ -123,14 +141,7 @@ export class EmpresaComponent implements OnInit, AfterViewInit {
   }
 
 
-  /**
-   * Checks if the user has the specified permission.
-   * @param permisoId The ID of the permission to check.
-   * @returns True if the user has the permission, otherwise false.
-   */
-  hasPermission(permisoId: number): boolean {
-    return this.permissionsService.hasPermission(permisoId);
-  }
+
 
   openNewEmpresaModal(): void {
     this.empresaService.openNewEmpresaModal(this.isNew, this.idEmpresa);
@@ -141,7 +152,7 @@ export class EmpresaComponent implements OnInit, AfterViewInit {
       width: '400px', // Ajusta el tamaño según tus necesidades
       disableClose: true, // Opcional: Para evitar cerrar la modal haciendo clic fuera de ella
     });
-    dialogRef.componentInstance.setTitle(_enable? 'Habilitar ': 'Deshabilitar '+`${_empresa.nombre_comercial}`);
+    dialogRef.componentInstance.setTitle(_enable ? 'Habilitar ' : 'Deshabilitar ' + `${_empresa.nombre_comercial}`);
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
         // Bloquear la pantalla

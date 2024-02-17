@@ -23,7 +23,7 @@
   </app-edit-empresa-modal>
 </div>
 
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 responsive-table" matSort matPaginator>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 responsive-table" matSort matPaginator *ngIf="visualizarEmpresa">
 
   <ng-container matColumnDef="logo">
     <th mat-header-cell *matHeaderCellDef> Logo </th>

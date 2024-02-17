@@ -30,9 +30,9 @@ export interface NewUsuario{
     Contrasena: string;
     Email: string;
     Direccion: string;
-    TerminosCondiciones:string;
-    TerminosCondicionesAcceptacion: boolean,
-    Empresas: Empresa[];
+    TerminosCondiciones?:string;
+    TerminosCondicionesAcceptacion?: boolean,
+    Empresas: number[];
 }
 
 export interface UpdateUsuario{
@@ -44,6 +44,6 @@ export interface UpdateUsuario{
         IdUsuario: number;
         TerminosCondiciones: string;
         TerminosCondicionesAcceptacion: boolean;
-        Empresas: Empresa[]
+        Empresas: number[]
 }
 
