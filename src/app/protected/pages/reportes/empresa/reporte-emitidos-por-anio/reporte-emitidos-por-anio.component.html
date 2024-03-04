@@ -1,0 +1,74 @@
+<div class="row">
+  <div class="col">
+    <app-empresa-select (businessSelected)="onEmpresaSelected($event)"></app-empresa-select>
+  </div>
+  <div class="col">
+    <button mat-raised-button color="primary" matTooltip="Exportar en PDF" (click)="exportReportPDF()">
+      <mat-icon aria-hidden="false" fontIcon="picture_as_pdf"></mat-icon>
+      Exportar PDF
+    </button>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <app-line-chart title="Reporte de Documentos Emitidos por Año" subtitle="Por Tipo de Documento - Empresa" [data]="dataSource"
+      *ngIf="dataSource"></app-line-chart>
+  </div>
+</div>
+
+<table mat-table [dataSource]="dataSourceTable" class="mat-elevation-z8 responsive-table">
+  <ng-container matColumnDef="Anio">
+    <th mat-header-cell *matHeaderCellDef> Año </th>
+    <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.Year}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Factura">
+    <th mat-header-cell *matHeaderCellDef>Factura </th>
+    <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.Factura}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="LiquidacionCompra">
+    <th mat-header-cell *matHeaderCellDef>Liquidación de Compras </th>
+    <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.LiquidacionCompras}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="NotaCredito">
+    <th mat-header-cell *matHeaderCellDef>Nota de Crédito </th>
+    <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.NotaCredito}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="NotaDebito">
+    <th mat-header-cell *matHeaderCellDef>Nota de Débito </th>
+    <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.NotaDebito}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="GuiaRemision">
+    <th mat-header-cell *matHeaderCellDef>Guía de Remisión </th>
+    <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.GuiaRemision}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="Retencion">
+    <th mat-header-cell *matHeaderCellDef>Retención</th>
+    <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.Retencion}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="Total">
+    <th mat-header-cell *matHeaderCellDef>Total</th>
+    <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.Total}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="AverageMonth">
+    <th mat-header-cell *matHeaderCellDef>Promedio Mensual</th>
+    <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.AverageMonth.toFixed(2)}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="AverageDay">
+    <th mat-header-cell *matHeaderCellDef>Promedio Diario</th>
+    <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.AverageDay.toFixed(2)}}</td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<app-spinner [loading]="loading"></app-spinner>

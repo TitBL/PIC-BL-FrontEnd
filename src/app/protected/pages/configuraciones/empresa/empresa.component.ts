@@ -79,7 +79,7 @@ export class EmpresaComponent implements OnInit, AfterViewInit {
     //#endregion
     if (this.visualizarEmpresa) {
       this.getBusinessList(this.selected);
-      // Suscribirse al evento de guardado de rol
+      // Suscribirse al evento de guardado
       this.empresaService.onBusinessSaved().subscribe(() => {
         this.getBusinessList(this.selected); // Recargar los datos de la tabla
       });

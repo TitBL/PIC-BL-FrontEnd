@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ViewUsuario } from '../interfaces/usersession';
+import { NewUsuario, UpdateUsuario, Usuario, ViewUsuario } from '../interfaces/usersession';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, tap } from 'rxjs';
+import { Observable, Subject, catchError, tap } from 'rxjs';
 import { Response } from '../interfaces/response';
 import { EditUsuarioModalComponent } from '../pages/configuraciones/usuario/edit-usuario-modal/edit-usuario-modal.component';
 import { CommonService } from 'src/app/shared/common.service';
@@ -15,6 +15,7 @@ import { SessionVariables } from 'src/app/auth/enums/sessionVariables';
 })
 export class UsuarioService {
   private _users!: ViewUsuario[];
+  private userSavedSubject = new Subject<void>();
 
   /**
    * Getter for the list of businesses.
@@ -50,7 +51,19 @@ export class UsuarioService {
   getUserById(_id: number): Observable<any> {
     const url = `${ApiRoutes.User.Get_byId}/${_id}`;
     const headers = this.commonService.createHeaders();
-    return this.http.get<Response>(url, { headers });
+    return this.http.get<Response>(url, { headers }).pipe(
+      tap(resp => { return resp }),
+      catchError(this.commonService.handleError)
+    );
+  }
+
+  getProfileDash(): Observable<any> {
+    const url = ApiRoutes.User.Get_Profile_Dash;
+    const headers = this.commonService.createHeaders();
+    return this.http.get<Response>(url, { headers }).pipe(
+      tap(resp => { return resp }),
+      catchError(this.commonService.handleError)
+    );
   }
 
 
@@ -63,11 +76,11 @@ export class UsuarioService {
 
     dialogRef.componentInstance.guardarUsuario.subscribe(result => {
       // Agrega el nuevo registro a tu fuente de datos
-      console.log(result);
       if (_isNew) {
         this.createNewUser(result).subscribe(
           (respuesta) => {
-            console.log(respuesta);
+             // Emitir evento cuando se guarda
+             this.userSavedSubject.next();
             this.commonService.notifySuccessResponse(respuesta.Message);
           },
           (error) => {
@@ -78,7 +91,8 @@ export class UsuarioService {
       } else {
         this.updateUser(result).subscribe(
           (respuesta) => {
-            console.log(respuesta);
+             // Emitir evento cuando se guarda
+             this.userSavedSubject.next();
             this.commonService.notifySuccessResponse(respuesta.Message);
           },
           (error) => {
@@ -89,18 +103,57 @@ export class UsuarioService {
         );
       }
     })
-}
+  }
 
-  createNewUser(usuario: any): Observable<any> {
+  // Método para permitir que otros componentes se suscriban al evento de guardado de rol
+  onUserSaved() {
+    return this.userSavedSubject.asObservable();
+  }
+
+  createNewUser(usuario: Usuario): Observable<any> {
+    const newUser: NewUsuario = {
+      Direccion: usuario.Direccion,
+      Email: usuario.Email,
+      Empresas: usuario.Empresas,
+      IdRol: usuario.IdRol,
+      NombreCompleto: usuario.NombreCompleto,
+      NombreUsuario: usuario.NombreUsuario,
+      Contrasena: usuario.Contrasena,
+      DNI: usuario.DNI
+    };
+    if (usuario.TerminosCondiciones !== undefined) {
+      newUser.TerminosCondiciones = usuario.TerminosCondiciones.TerminosyCondiciones,
+        newUser.TerminosCondicionesAcceptacion = usuario.TerminosCondiciones.Aceptado
+    }
     const url = ApiRoutes.User.New;
     const headers = this.commonService.createHeaders();
-    return this.http.post(url, usuario, { headers });
+    return this.http.post(url, newUser, { headers }).pipe(
+      tap(resp => { return resp }),
+      catchError(this.commonService.handleError)
+    );
   };
 
-  updateUser(usuario: any): Observable<any> {
-    const url = ApiRoutes.User.Update;
+  updateUser(usuario: Usuario): Observable<any> {
+    const _id: number = usuario.id;
+    const updateUser: UpdateUsuario = {
+      Direccion: usuario.Direccion,
+      Email: usuario.Email,
+      Empresas: usuario.Empresas,
+      IdRol: usuario.IdRol,
+      IdUsuario: usuario.id,
+      NombreCompleto: usuario.NombreCompleto,
+      NombreUsuario: usuario.NombreUsuario
+    };
+    if (usuario.TerminosCondiciones !== undefined) {
+      updateUser.TerminosCondiciones = usuario.TerminosCondiciones.TerminosyCondiciones,
+        updateUser.TerminosCondicionesAcceptacion = usuario.TerminosCondiciones.Aceptado
+    }
+    const url = `${ApiRoutes.User.Update}/${_id}`;
     const headers = this.commonService.createHeaders();
-    return this.http.post(url, usuario, { headers });
+    return this.http.put(url, updateUser, { headers }).pipe(
+      tap(resp => { return resp }),
+      catchError(this.commonService.handleError)
+    );
   };
 
 

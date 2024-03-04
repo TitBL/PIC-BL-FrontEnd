@@ -11,7 +11,8 @@
     <app-estado-select (stateSelected)="onSelectChange($event)"></app-estado-select>
   </div>
   <div class="col-xl-2 text-end" *ngIf="crearUsuario">
-    <button mat-raised-button color="primary" type="button" matTooltip="Nuevo" (click)="isNew = true; openNewUserModal()">
+    <button mat-raised-button color="primary" type="button" matTooltip="Nuevo"
+      (click)="isNew = true; openNewUserModal()">
       <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
       Nuevo
     </button>
@@ -23,7 +24,8 @@
     (guardarUsuario)="guardarUsuario($event)"></app-edit-usuario-modal>
 </div>
 
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 responsive-table" matSort matPaginator *ngIf="visualizarUsuario">
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 responsive-table" matSort matPaginator
+  *ngIf="visualizarUsuario">
 
   <ng-container matColumnDef="NombreUsuario">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre Usuario </th>
@@ -43,18 +45,23 @@
   <ng-container matColumnDef="funciones">
     <th mat-header-cell *matHeaderCellDef> Funciones </th>
     <td mat-cell *matCellDef="let viewUsuario" class="button-row">
-      <button mat-icon-button *ngIf="editarUsuario && selected === '1' && viewUsuario.Rol !== 'Master'" color="primary" matTooltip="Editar"
-        (click)="isNew = false; idUsuario = viewUsuario.id; openNewUserModal()">
+      <button mat-icon-button *ngIf="editarUsuario && selected === '1' && viewUsuario.Rol !== 'Master'" color="primary"
+        matTooltip="Editar" (click)="isNew = false; idUsuario = viewUsuario.id; openNewUserModal()">
         <mat-icon fontIcon="edit"></mat-icon>
       </button>
 
-      <button mat-icon-button *ngIf="cambiarEstadoUsuario && selected === '1' && viewUsuario.Rol !== 'Master'" color="warn" matTooltip="Deshabilitar"
-        (click)="toggleUserStatusById(viewUsuario, false)">
+      <button mat-icon-button *ngIf="editarUsuario && selected === '1' && viewUsuario.Rol !== 'Master'"
+        matTooltip="Restablecer contraseña" (click)="resetPassword(viewUsuario)">
+        <mat-icon fontIcon="key"></mat-icon>
+      </button>
+
+      <button mat-icon-button *ngIf="cambiarEstadoUsuario && selected === '1' && viewUsuario.Rol !== 'Master'"
+        color="warn" matTooltip="Deshabilitar" (click)="toggleUserStatusById(viewUsuario, false)">
         <mat-icon fontIcon="delete"></mat-icon>
       </button>
 
-      <button mat-icon-button *ngIf="cambiarEstadoUsuario && selected ==='0' && viewUsuario.Rol !== 'Master'" class="btn_success" matTooltip="Habilitar"
-        (click)="toggleUserStatusById(viewUsuario, true)">
+      <button mat-icon-button *ngIf="cambiarEstadoUsuario && selected ==='0' && viewUsuario.Rol !== 'Master'"
+        class="btn_success" matTooltip="Habilitar" (click)="toggleUserStatusById(viewUsuario, true)">
         <mat-icon fontIcon="done"></mat-icon>
       </button>
     </td>

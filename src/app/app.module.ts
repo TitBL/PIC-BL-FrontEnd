@@ -11,7 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 
-/**MATERIAL */
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -25,7 +25,9 @@ import { AppComponent } from './app.component';
     AppRoutingModule,
     ImportMaterialModule
   ],
-  providers: [],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'es-EC' } 
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

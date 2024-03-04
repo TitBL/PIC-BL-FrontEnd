@@ -22,6 +22,7 @@
     <mat-form-field style="width: 75%;">
         <mat-label>Contraseña</mat-label>
       <input matInput placeholder="Contraseña" type="password" formControlName="contrasena">
+      <mat-hint>Contiene número, mayúscula, minúscula y carácter especial</mat-hint>
     </mat-form-field>
   
     <mat-form-field style="width: 75%;">
@@ -31,7 +32,7 @@
   
     <mat-checkbox formControlName="aceptacionConsentimiento">
       
-      <button mat-button (click)="mostrarClausulas()" matTooltip="Mostrar Clausulas">Acepto Términos y Condiciones</button>
+      <button mat-button (click)="mostrarClausulas()" matTooltip="Mostrar Cláusulas">Acepto Términos y Condiciones</button>
     </mat-checkbox>
   
     <!-- Botón para mostrar cláusulas -->

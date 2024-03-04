@@ -1,0 +1,18 @@
+.line-chart-style{
+    max-width: 85%; 
+    margin: auto;
+    min-height: 45vh; 
+    justify-content: center; 
+    display: flex; 
+    margin-bottom: 2vh;
+}
+
+@media (max-width: 600px) {
+    .line-chart-style{
+       width: 100%; 
+        margin: auto;
+        justify-content: center; 
+        display: flex; 
+        margin-bottom: 2vh;
+    }
+}

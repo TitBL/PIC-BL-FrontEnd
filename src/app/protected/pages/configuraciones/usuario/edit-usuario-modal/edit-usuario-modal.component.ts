@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { PermissionsEnum } from 'src/app/protected/enums/permissions.enum';
 import { ViewEmpresaSession } from 'src/app/protected/interfaces/empresa';
-import { NewUsuario } from 'src/app/protected/interfaces/usersession';
+import { Usuario } from 'src/app/protected/interfaces/usersession';
 import { EmpresaService } from 'src/app/protected/services/empresa.service';
+import { PermissionsService } from 'src/app/protected/services/permissions.service';
 import { UsuarioService } from 'src/app/protected/services/usuario.service';
 import { CommonService } from 'src/app/shared/common.service';
 
@@ -15,7 +17,7 @@ import { CommonService } from 'src/app/shared/common.service';
 export class EditUsuarioModalComponent implements OnInit {
   @Input() IsNew: boolean = true;
   @Input() IdUsuario: number = 0;
-  @Output() guardarUsuario = new EventEmitter<NewUsuario>();
+  @Output() guardarUsuario = new EventEmitter<Usuario>();
 
   businessList: ViewEmpresaSession[] = [];
   crearUsuarioForm: FormGroup;
@@ -24,21 +26,28 @@ export class EditUsuarioModalComponent implements OnInit {
   checkedBusiness: number[] = [];
   repetirContrasena: string | undefined;
 
-  usuario: NewUsuario = {
-    Contrasena: '',
+  usuario: Usuario = {
+    id: -1,
     Direccion: '',
     DNI: '',
     Email: '',
     Empresas: [],
-    IdRol: 0,
+    IdRol: -1,
     NombreCompleto: '',
     NombreUsuario: '',
-    TerminosCondiciones: 'ACEPTO TERMINOS Y CONDICIONES',
-    TerminosCondicionesAcceptacion: true
+    Contrasena: '',
+    TerminosCondiciones: {
+      Aceptado: true,
+      FechaRegistro: '',
+      TerminosyCondiciones: 'ACEPTADO TERMINOS Y CONDICIONES'
+    }
   };
+
+  asignarEmpresasAUsuario: boolean = true;
 
   constructor(
     private fb: FormBuilder,
+    private permissionsService: PermissionsService,
     private commonService: CommonService,
     private empresaService: EmpresaService,
     private usuarioService: UsuarioService,
@@ -57,6 +66,7 @@ export class EditUsuarioModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.asignarEmpresasAUsuario = this.hasPermission(PermissionsEnum.AsignarEmpresasAUsuario);
     this.businessList = this.empresaService.getBusinessOfUserSession();
     this.businessList.sort((a, b) => a.nombreComercial.localeCompare(b.nombreComercial));
     this.IsNew = this.data['IsNew'];
@@ -64,6 +74,15 @@ export class EditUsuarioModalComponent implements OnInit {
     if (!this.IsNew) {
       this.getUserById(this.IdUsuario);
     }
+  }
+
+  /**
+  * Checks if the user has the specified permission.
+  * @param permisoId The ID of the permission to check.
+  * @returns True if the user has the permission, otherwise false.
+  */
+  hasPermission(permisoId: number): boolean {
+    return this.permissionsService.hasPermission(permisoId);
   }
 
   onSaveUserClick(): void {
@@ -77,8 +96,6 @@ export class EditUsuarioModalComponent implements OnInit {
       return;
     }
     this.usuario.Empresas = this.checkedBusiness;
-    console.log('OBJETO', this.usuario);
-    console.log('FORMULARIO', this.crearUsuarioForm.value);
     this.guardarUsuario.emit(this.usuario);
   }
 
@@ -86,11 +103,30 @@ export class EditUsuarioModalComponent implements OnInit {
     this.usuarioService.getUserById(_id)
       .subscribe(ok => {
         if (ok.Success === true) {
-          this.usuario = ok.Data;
-          console.log(ok.Data);
-          console.log(this.usuario);
-          this.usuario.Empresas = ok.Data.Empresas;
-          this.checkedBusiness = ok.Data.Empresas;
+          this.usuario = {
+            id: ok.Data.id,
+            DNI: ok.Data.DNI,
+            Direccion: ok.Data.Direccion,
+            Email: ok.Data.Email,
+            Empresas: [],
+            IdRol: parseInt(ok.Data.IdRol),
+            NombreCompleto: ok.Data.NombreCompleto,
+            NombreUsuario: ok.Data.NombreUsuario,
+            Contrasena: ''
+          };
+          if (ok.Data.TerminosCondiciones !== null) {
+            this.usuario.TerminosCondiciones = {
+              Aceptado: ok.Data.TerminosCondiciones.Aceptado === "1" ? true : false,
+              TerminosyCondiciones: ok.Data.TerminosCondiciones.Terminos,
+            }
+          }
+          // this.usuario.IdRol = parseInt(ok.Data.IdRol);
+          if (ok.Data.Empresas.length !== 0) {
+            ok.Data.Empresas.forEach((element: { id: number; nombrecomercial: string}) => {
+              this.usuario.Empresas.push(element.id);
+              this.checkedBusiness.push(element.id);
+            });
+          }
         } else {
           this.commonService.notifyErrorResponse('Ha ocurrido un error en la consulta');
         }
@@ -110,7 +146,6 @@ export class EditUsuarioModalComponent implements OnInit {
   }
 
   onRolSelected(rol: number) {
-    console.log(rol);
     this.usuario.IdRol = rol;
   }
 }

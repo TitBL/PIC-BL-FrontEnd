@@ -52,28 +52,26 @@ export class EmpresaService {
     const url = `${ApiRoutes.Business.Get_byId}/${_id}`;
     const headers = this.commonService.createHeaders();
     return this.http.get<Response>(url, { headers })
-    .pipe(
-      tap(resp => {return resp}),
-      catchError(this.commonService.handleError)
-    );
+      .pipe(
+        tap(resp => { return resp }),
+        catchError(this.commonService.handleError)
+      );
   }
 
 
   openNewEmpresaModal(_isNew: boolean, _idEmpresa: number): void {
     const dialogRef = this.dialog.open(EditEmpresaModalComponent, {
-      width: '75%', // Ajusta el tamaño según tus necesidades
-      disableClose: true, // Opcional: Para evitar cerrar la modal haciendo clic fuera de ella
+      width: '75%',
+      disableClose: true,
       data: { IsNew: _isNew, IdEmpresa: _idEmpresa }
     });
 
     dialogRef.componentInstance.guardarEmpresa.subscribe((nuevoRegistro) => {
       // Agrega el nuevo registro a tu fuente de datos
-      console.log(nuevoRegistro);
       if (_isNew) {
         this.createNewBusiness(nuevoRegistro).subscribe(
           (respuesta) => {
-            console.log(respuesta);
-            // Emitir evento cuando se guarda un nuevo rol
+            // Emitir evento cuando se guarda
             this.businessSavedSubject.next();
             this.commonService.notifySuccessResponse(respuesta.Message);
           },
@@ -85,85 +83,83 @@ export class EmpresaService {
       } else {
         this.updateBusiness(nuevoRegistro).subscribe(
           (respuesta) => {
-            console.log(respuesta);
-             // Emitir evento cuando se guarda un nuevo rol
-             this.businessSavedSubject.next();
+            // Emitir evento cuando se guarda
+            this.businessSavedSubject.next();
             this.commonService.notifySuccessResponse(respuesta.Message);
           },
           (error) => {
             console.error('Error:', error);
             this.commonService.notifyErrorResponse(error.message);
-            
+
           }
         );
       }
-     
-      // Puedes utilizar MatTableDataSource y llamar a .data para actualizar la tabla
     });
   }
 
-   // Método para permitir que otros componentes se suscriban al evento de guardado de rol
-   onBusinessSaved() {
+  // Método para permitir que otros componentes se suscriban al evento de guardado de rol
+  onBusinessSaved() {
     return this.businessSavedSubject.asObservable();
   }
 
   createNewBusiness(empresa: Empresa): Observable<any> {
-    const newEmpresa : NewEmpresa = {
-      APIKey : empresa.APIKey,
-      Email : empresa.Email,
-      Logo : empresa.Logo,
-      NombreComercial : empresa.NombreComercial,
-      PasswordSMTP : empresa.PasswordSMTP,
-      PuedeEnviarCorreo : empresa.PuedeEnviarCorreo,
-      Puerto : empresa.Puerto,
-      RazonSocial : empresa.RazonSocial,
-      RUC : empresa.RUC,
-      Servidor : empresa.Servidor,
+    const newEmpresa: NewEmpresa = {
+      APIKey: empresa.APIKey,
+      Email: empresa.Email,
+      Logo: empresa.Logo,
+      NombreComercial: empresa.NombreComercial,
+      PasswordSMTP: empresa.PasswordSMTP,
+      PuedeEnviarCorreo: empresa.PuedeEnviarCorreo,
+      Puerto: empresa.Puerto,
+      RazonSocial: empresa.RazonSocial,
+      RUC: empresa.RUC,
+      Servidor: empresa.Servidor,
       TipoSeguridad: empresa.TipoSeguridad,
-      UsaConfiguracionSMTP : empresa.UsaConfiguracionSMTP,
-      UsuarioSMTP : empresa.UsuarioSMTP
+      UsaConfiguracionSMTP: empresa.UsaConfiguracionSMTP,
+      UsuarioSMTP: empresa.UsuarioSMTP
     }
     const url = ApiRoutes.Business.New;
     const headers = this.commonService.createHeaders();
-    return this.http.post(url, newEmpresa, { headers }).pipe(
-      tap(resp => {return resp}),
-      catchError(this.commonService.handleError)
-    );
+    return this.http.post(url, newEmpresa, { headers })
+      .pipe(
+        tap(resp => { return resp }),
+        catchError(this.commonService.handleError)
+      );
   }
-  
+
   updateBusiness(empresa: Empresa): Observable<any> {
-    const _id : number = empresa.id;
-    const updateEmpresa : UpdateEmpresa = {
-      APIKey : empresa.APIKey,
-      Email : empresa.Email,
-      Logo : empresa.Logo,
-      NombreComercial : empresa.NombreComercial,
-      PasswordSMTP : empresa.PasswordSMTP,
-      PuedeEnviarCorreo : empresa.PuedeEnviarCorreo,
-      Puerto : empresa.Puerto,
-      Servidor : empresa.Servidor,
+    const _id: number = empresa.id;
+    const updateEmpresa: UpdateEmpresa = {
+      APIKey: empresa.APIKey,
+      Email: empresa.Email,
+      Logo: empresa.Logo,
+      NombreComercial: empresa.NombreComercial,
+      PasswordSMTP: empresa.PasswordSMTP,
+      PuedeEnviarCorreo: empresa.PuedeEnviarCorreo,
+      Puerto: empresa.Puerto,
+      Servidor: empresa.Servidor,
       TipoSeguridad: empresa.TipoSeguridad,
-      UsaConfiguracionSMTP : empresa.UsaConfiguracionSMTP,
-      UsuarioSMTP : empresa.UsuarioSMTP
+      UsaConfiguracionSMTP: empresa.UsaConfiguracionSMTP,
+      UsuarioSMTP: empresa.UsuarioSMTP
     };
 
-    const url =  `${ApiRoutes.Business.Update}/${_id}`;
+    const url = `${ApiRoutes.Business.Update}/${_id}`;
     const headers = this.commonService.createHeaders();
     return this.http.put(url, updateEmpresa, { headers })
-    .pipe(
-      tap(resp => {return resp}),
-      catchError(this.commonService.handleError)
-    );
+      .pipe(
+        tap(resp => { return resp }),
+        catchError(this.commonService.handleError)
+      );
   }
 
   getApiKey(): Observable<any> {
     const url = ApiRoutes.Business.Get_APIKey;
     const headers = this.commonService.createHeaders();
     return this.http.get<Response>(url, { headers })
-    .pipe(
-      tap(resp => {return resp}),
-      catchError(this.commonService.handleError)
-    );
+      .pipe(
+        tap(resp => { return resp }),
+        catchError(this.commonService.handleError)
+      );
   }
 
   toggleBusinessStatus(_idEmpresa: number, enable: boolean): Observable<any> {
@@ -172,10 +168,10 @@ export class EmpresaService {
     const headers = this.commonService.createHeaders();
     var body = {};
     return this.http.post(url, body, { headers })
-    .pipe(
-      tap(resp => {return resp}),
-      catchError(this.commonService.handleError)
-    );
+      .pipe(
+        tap(resp => { return resp }),
+        catchError(this.commonService.handleError)
+      );
   }
 
   getBusinessOfUserSession(): ViewEmpresaSession[] {

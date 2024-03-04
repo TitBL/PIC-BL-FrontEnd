@@ -22,6 +22,19 @@ export interface ViewUsuario{
     estado: EstadosEnum;
 }
 
+export interface Usuario{
+    id: number;
+    IdRol: number;
+    DNI: string;
+    NombreUsuario: string;
+    NombreCompleto: string;
+    Direccion: string;
+    Contrasena: string;
+    Email: string;
+    Empresas: number[];
+    TerminosCondiciones?: TerminosCondiciones
+}
+
 export interface NewUsuario{
     DNI: string;
     NombreUsuario: string;
@@ -42,8 +55,14 @@ export interface UpdateUsuario{
         Email: string;
         Direccion: string;
         IdUsuario: number;
-        TerminosCondiciones: string;
-        TerminosCondicionesAcceptacion: boolean;
+        TerminosCondiciones?: string;
+        TerminosCondicionesAcceptacion?: boolean;
         Empresas: number[]
+}
+
+export interface TerminosCondiciones{
+    Aceptado: boolean;
+    FechaRegistro?: string;
+    TerminosyCondiciones: string;
 }
 

@@ -3,7 +3,7 @@ export interface ViewDocumentReceived {
     Mes: string;
     Dia: string;
     FechaDocumento: string;
-    FechayHoraAutorizacion: string;
+    FechaHoraAutorizacion: string;
     Emisor: string;
     TipoDocumento: string;
     Documento: string;

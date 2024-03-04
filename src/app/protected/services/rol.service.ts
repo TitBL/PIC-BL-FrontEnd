@@ -70,11 +70,9 @@ export class RolService {
 
     dialogRef.componentInstance.guardarRol.subscribe((nuevoRegistro) => {
       // Agrega el nuevo registro a tu fuente de datos
-      console.log(nuevoRegistro);
       if (_isNew) {
         this.createNewRol(nuevoRegistro).subscribe(
           (respuesta) => {
-            console.log(respuesta);
             this.commonService.notifySuccessResponse(respuesta.Message);
             // Emitir evento cuando se guarda un nuevo rol
             this.rolSavedSubject.next();
@@ -87,7 +85,6 @@ export class RolService {
       } else {
         this.updateRol(nuevoRegistro).subscribe(
           (respuesta) => {
-            console.log(respuesta);
             this.commonService.notifySuccessResponse(respuesta.Message);
             // Emitir evento cuando se guarda un nuevo rol
             this.rolSavedSubject.next();

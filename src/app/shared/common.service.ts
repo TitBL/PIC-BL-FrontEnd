@@ -10,9 +10,6 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class CommonService {
- 
-  private token = sessionStorage.getItem(SessionVariables.Token);
-  private session = sessionStorage.getItem(SessionVariables.Session);
 
   constructor(private _snackBar: MatSnackBar,
     private router: Router) { }
@@ -22,9 +19,11 @@ export class CommonService {
    * @returns HttpHeaders with authorization information.
    */
   createHeaders(): HttpHeaders {
+    const token = sessionStorage.getItem(SessionVariables.Token);
+    const session = sessionStorage.getItem(SessionVariables.Session);
     return new HttpHeaders({
-      'Authorization': `Bearer ${this.token}`,
-      'SessionId': `${this.session}`,
+      'Authorization': `Bearer ${token}`,
+      'SessionId': `${session}`,
       'Content-Type': 'application/json'
     });
   }
@@ -41,19 +40,19 @@ export class CommonService {
   }
 
 
-   /**
-   * Validates whether the provided email is in a valid format.
-   * @param email The email to be validated.
-   * @returns True if the email is valid, otherwise false.
-   */
-   validateEmailAddress(email: string): boolean {
+  /**
+  * Validates whether the provided email is in a valid format.
+  * @param email The email to be validated.
+  * @returns True if the email is valid, otherwise false.
+  */
+  validateEmailAddress(email: string): boolean {
     const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regular expression for email validation
     return emailRegex.test(email);
   }
 
   isValidImageUrl(url: string): string {
     const imageFormatRegex = /\.(jpeg|jpg|gif|png|bmp)$/;
-    return imageFormatRegex.test(url)? url : environment.urlSinImagen;
+    return imageFormatRegex.test(url) ? url : environment.urlSinImagen;
   }
 
   downloadPDFFromBytes(documentBytes: Blob, fileName: string): void {
@@ -80,7 +79,7 @@ export class CommonService {
     link.click();
   }
 
-  notifyErrorResponse(message:string){
+  notifyErrorResponse(message: string) {
     this._snackBar.open(message, '', {
       horizontalPosition: 'end',
       verticalPosition: 'top',
@@ -88,8 +87,8 @@ export class CommonService {
       panelClass: 'app-notification-error'
     });
   }
-  
-  notifySuccessResponse(message:string){
+
+  notifySuccessResponse(message: string) {
     this._snackBar.open(message, '', {
       horizontalPosition: 'end',
       verticalPosition: 'top',
@@ -113,5 +112,5 @@ export class CommonService {
     return of(null);
   }
 
-   
+
 }

@@ -4,8 +4,9 @@
                 (ngModelChange)="onBusinessChange()"
                 placeholder="Empresas"
                 name="business" 
-                [required]="required">
-        <mat-option *ngFor="let type of businessList" [value]="type.id">
+                [required]="required" [compareWith]="compareBusiness">
+                <input matInput placeholder="Buscar empresa..." (input)="filterBusinessList($event)"/>
+        <mat-option *ngFor="let type of filteredBusinessList" [value]="type.id">
             {{ type.nombreComercial }}
         </mat-option>
     </mat-select>

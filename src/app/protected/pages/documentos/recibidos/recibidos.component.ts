@@ -80,10 +80,12 @@ export class RecibidosComponent implements OnInit, AfterViewInit {
     * @param _fechaHasta The end date for the document search.
     */
   getDocumentReceivedConsumerList(_idUsuario: number, _fechaDesde: string, _fechaHasta: string) {
+    // Bloquear la pantalla
+    this.loading = true;
     this.documentoService.getDocumentReceivedConsumer(_idUsuario, _fechaDesde, _fechaHasta)
       .subscribe(ok => {
         if (ok !== undefined) {
-          this.dataSource.data = ok;
+          this.dataSource.data = ok.Data;
           this.applyFilter();
         } else {
           this.commonService.notifyErrorResponse('Ha ocurrido un error en la consulta');

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { CommonService } from 'src/app/shared/common.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit{
   public loading: boolean = false;
   // Form group for login details
   miFormulario: FormGroup = this.fb.group({
@@ -21,6 +21,10 @@ export class LoginComponent {
     private router: Router,
     private authService: AuthService,
     private commonService: CommonService) { }
+
+  ngOnInit(): void {
+   this.clearSessionStorage();
+  }
 
   /**
    * Attempts to log in the user using the provided credentials.
@@ -54,5 +58,14 @@ export class LoginComponent {
         () => this.loading = false // Desbloquear la pantalla cuando se complete la operación
       );
   }
+
+   /**
+   * Attempts to log in the user using the provided credentials.
+   * If successful, navigates to the dashboard; otherwise, displays an error message.
+   */
+   clearSessionStorage() {
+    this.authService.logout();
+  }
+
 
 }

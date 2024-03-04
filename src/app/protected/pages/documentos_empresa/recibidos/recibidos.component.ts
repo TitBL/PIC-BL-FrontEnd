@@ -37,7 +37,7 @@ export class RecibidosEmpresaComponent implements OnInit, AfterViewInit {
   descargarDocumentos: boolean = true;
   reenviarDocumentos: boolean = true;
 
-  selectedDocumentType: string | undefined;
+  selectedDocumentType: string = 'Factura';
   selectedBusiness: number = 0;
   filterValue: string = '';
   loading: boolean = false;
@@ -55,7 +55,7 @@ export class RecibidosEmpresaComponent implements OnInit, AfterViewInit {
     this.visualizarDocumentos = this.hasPermission(PermissionsEnum.VisualizarDocumentosEmpresasRecibidos);
     this.descargarDocumentos = this.hasPermission(PermissionsEnum.DescargarDocumentosEmpresasRecibidos);
     this.reenviarDocumentos = this.hasPermission(PermissionsEnum.EnviarPorEmailDocumentosEmpresasRecibidos);
-   //#endregion
+    //#endregion
     if (this.visualizarDocumentos) {
       this.searchDocuments();
     } else {
@@ -76,10 +76,12 @@ export class RecibidosEmpresaComponent implements OnInit, AfterViewInit {
  * @param _fechaHasta The end date for the document search.
  */
   getDocumentReceivedBusinessList(_idEmpresa: number, _fechaDesde: string, _fechaHasta: string) {
+    // Bloquear la pantalla
+    this.loading = true;
     this.documentoService.getDocumentReceivedBusiness(_idEmpresa, _fechaDesde, _fechaHasta)
       .subscribe(ok => {
         if (ok !== undefined) {
-          this.dataSource.data = ok;
+          this.dataSource.data = ok.Data;
           this.applyFilter();
         } else {
           this.commonService.notifyErrorResponse('Ha ocurrido un error en la consulta');
@@ -149,7 +151,6 @@ export class RecibidosEmpresaComponent implements OnInit, AfterViewInit {
   }
 
   openPdfModal(_claveAcceso: string): void {
-    // Bloquear la pantalla
     this.loading = true;
     this.documentoService.downloadPDF(_claveAcceso)
       .subscribe((response: any) => {
@@ -163,7 +164,6 @@ export class RecibidosEmpresaComponent implements OnInit, AfterViewInit {
           console.error('Error downloading PDF:', error);
           this.commonService.notifyErrorResponse('Ha ocurrido un error en la consulta');
         }).add(() => {
-          // Desbloquear la pantalla cuando se complete la operación
           this.loading = false;
         });
   }
@@ -174,17 +174,18 @@ export class RecibidosEmpresaComponent implements OnInit, AfterViewInit {
     // Utiliza las fechas seleccionadas en lugar de las fechas fijas
     const fechaDesde = this.fechaDesde ? this.fechaDesde.toISOString().split('T')[0] : '';
     const fechaHasta = this.fechaHasta ? this.fechaHasta.toISOString().split('T')[0] : '';
-
     // Llama a la función que carga los documentos con las fechas seleccionadas
     this.getDocumentReceivedBusinessList(this.selectedBusiness, fechaDesde, fechaHasta);
   }
 
 
   applyFilter() {
-    // Convertir la cadena de filtro a minúsculas para hacer una comparación sin distinción entre mayúsculas y minúsculas
     const lowerCaseFilter = this.filterValue.trim().toLowerCase();
-    // Aplicar el filtro a la fuente de datos
     this.dataSource.filter = lowerCaseFilter;
+    // También aplicamos el filtro por tipo de documento
+    if (this.selectedDocumentType !== 'Todos') {
+      this.dataSource.filter = lowerCaseFilter + ' ' + this.selectedDocumentType.trim().toLowerCase();
+    }
   }
 
   /**
@@ -198,16 +199,16 @@ export class RecibidosEmpresaComponent implements OnInit, AfterViewInit {
 
   onDocumentTypeSelected(documentType: string) {
     this.selectedDocumentType = documentType;
-    // Convertir la cadena de filtro a minúsculas para hacer una comparación sin distinción entre mayúsculas y minúsculas
     const lowerCaseFilter = documentType.trim().toLowerCase();
-    // Aplicar el filtro a la fuente de datos
     this.dataSource.filter = lowerCaseFilter;
+    this.applyFilter();
   }
 
   onEmpresaSelected(empresa: number) {
-    console.log(empresa);
-    this.selectedBusiness = empresa;
-    this.searchDocuments();
+    if (empresa) {
+      this.selectedBusiness = empresa;
+      this.searchDocuments();
+    }
   }
 
 }

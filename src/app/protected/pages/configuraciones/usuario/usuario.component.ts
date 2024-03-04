@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/auth/services/auth.service';
 import { DialogTemplateComponent } from 'src/app/protected/components/dialog-template/dialog-template.component';
 import { EstadosEnum } from 'src/app/protected/enums/estados.enum';
 import { PermissionsEnum } from 'src/app/protected/enums/permissions.enum';
@@ -36,8 +37,7 @@ export class UsuarioComponent implements OnInit, AfterViewInit {
   crearUsuario: boolean = true;
   editarUsuario: boolean = true;
   cambiarEstadoUsuario: boolean = true;
-  asignarEmpresasAUsuario: boolean = true;
-
+ 
 
   loading: boolean = false;
   isNew: boolean = true;
@@ -51,7 +51,8 @@ export class UsuarioComponent implements OnInit, AfterViewInit {
     private permissionsService: PermissionsService,
     private dialog: MatDialog,
     public commonService: CommonService,
-    private router: Router) { }
+    private router: Router,
+    private authService: AuthService) { }
 
   /**
   * Initializes the component and sets the initial values for permissions and business list.
@@ -62,10 +63,13 @@ export class UsuarioComponent implements OnInit, AfterViewInit {
     this.crearUsuario = this.hasPermission(PermissionsEnum.CrearUsuario);
     this.editarUsuario = this.hasPermission(PermissionsEnum.EditarUsuario);
     this.cambiarEstadoUsuario = this.hasPermission(PermissionsEnum.HabilitarDeshabilitarUsuario);
-    this.asignarEmpresasAUsuario = this.hasPermission(PermissionsEnum.AsignarEmpresasAUsuario);
   //#endregion
   if (this.visualizarUsuario) {
     this.getUsersList(this.selected);
+      // Suscribirse al evento de guardado
+      this.usuarioService.onUserSaved().subscribe(() => {
+        this.getUsersList(this.selected);
+      });
   } else {
     this.router.navigate(['/']);
   }
@@ -131,24 +135,57 @@ export class UsuarioComponent implements OnInit, AfterViewInit {
   }
 
   // Método llamado desde el modal para guardar la empresa
-  guardarUsuario(empresa: any) {
+  guardarUsuario(usuario: any) {
     // Lógica para guardar la empresa, ya sea creando una nueva o editando según el estado de nuevaEmpresa
     if (this.isNew) {
       // Crear nueva empresa
-      this.usuarioService.createNewUser(empresa).subscribe(
+      this.usuarioService.createNewUser(usuario).subscribe(
         (respuesta) => {
-          // Manejar la respuesta del servicio si es necesario
-          console.log('Nueva empresa creada:', respuesta);
         },
         (error) => {
           // Manejar errores si es necesario
-          console.error('Error al crear la nueva empresa:', error);
+          console.error('Error al crear nuevo usuario:', error);
         }
       );
     } else {
       // Editar empresa existente
       // Puedes llamar a un método del servicio para actualizar la empresa existente
     }
+  }
+
+  resetPassword(usuario: ViewUsuario) {
+    const dialogRef = this.dialog.open(DialogTemplateComponent, {
+      width: '400px',
+      disableClose: true,
+    });
+
+    dialogRef.componentInstance.setTitle('Restablecer contraseña de '+`${usuario.NombreUsuario}`);
+    dialogRef.componentInstance.setMessage('Se enviará un correo electrónico con una contraseña temporal, ¿Está seguro?');
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        // Bloquear la pantalla
+        this.loading = true;
+
+        this.authService.resetPassword(usuario.DNI)
+          .subscribe(
+            (ok) => {
+              // Successful login
+              if (ok === true) {
+                this.commonService.notifySuccessResponse('¡Se ha enviado exitosamente una contraseña temporal a su correo!');
+              } else {
+                console.error('Error:', ok);
+              }
+            },
+            (error) => {
+              this.commonService.notifyErrorResponse('Ocurrió un error');
+              //console.error('Error LOGIN:', error);
+              this.loading = false; // Desbloquear la pantalla cuando se complete la operación
+            },
+            () => this.loading = false // Desbloquear la pantalla cuando se complete la operación
+          );
+      }
+    });
   }
 
   toggleUserStatusById(_user: ViewUsuario, _enable: boolean) {
@@ -165,7 +202,6 @@ export class UsuarioComponent implements OnInit, AfterViewInit {
         this.loading = true;
         this.usuarioService.toggleUserStatus(_user.id, _enable).subscribe(
           (respuesta) => {
-            console.log(respuesta);
             this.getUsersList(this.selected);
           },
           (error) => {

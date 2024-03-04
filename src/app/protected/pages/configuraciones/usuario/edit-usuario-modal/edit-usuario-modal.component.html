@@ -40,20 +40,20 @@
                             <input matInput placeholder="Email" name="email" type="email" [(ngModel)]="usuario.Email" required>
                         </mat-form-field>
 
-                        <mat-form-field class="col-md-6 col-12 px-3">
+                        <mat-form-field class="col-md-6 col-12 px-3" *ngIf="IsNew">
                             <mat-label>Contraseña</mat-label>
                             <input matInput placeholder="Contraseña" name="contrasena" type="password"
                                 [(ngModel)]="usuario.Contrasena" required>
                         </mat-form-field>
 
-                        <mat-form-field class="col-md-6 col-12 px-3">
+                        <mat-form-field class="col-md-6 col-12 px-3" *ngIf="IsNew">
                             <mat-label>Repetir Contraseña</mat-label>
                             <input matInput placeholder="Repetir Contraseña" type="password"
                                 [(ngModel)]="repetirContrasena" name="repetirContrasena" required>
                         </mat-form-field>
                     </div>
                 </mat-tab>
-                <mat-tab label="Empresas">
+                <mat-tab label="Empresas" *ngIf="asignarEmpresasAUsuario">
                     <div class="row mt-2" style="height: 42vh; width: 100%;">
                         <mat-checkbox *ngFor="let business of businessList" class="col-4"
                             [checked]="checkedBusiness.includes(business.id)" (change)="onCheckboxChange(business.id)">

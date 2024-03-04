@@ -8,6 +8,7 @@ import { MainComponent } from './pages/main/main.component';
 
 import { ImportMaterialModule } from '../modules/import-material.module';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
+import { TerminosCondicionesDialogComponent } from './components/terminos-condiciones-dialog/terminos-condiciones-dialog.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password
     LoginComponent,
     RegisterComponent,
     MainComponent,
-    ForgotPasswordComponent
+    ForgotPasswordComponent,
+    TerminosCondicionesDialogComponent
   ],
   imports: [
     CommonModule,

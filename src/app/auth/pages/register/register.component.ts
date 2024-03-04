@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { TerminosCondicionesDialogComponent } from '../../components/terminos-condiciones-dialog/terminos-condiciones-dialog.component';
 
 @Component({
   selector: 'app-register',
@@ -13,7 +12,7 @@ export class RegisterComponent {
   public _loading: boolean = false;
   registroForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, public dialog: MatDialog) {
     this.registroForm = this.fb.group({
       cedula: ['', [Validators.required, Validators.maxLength(20)]],
       nombreUsuario: ['', [Validators.required, Validators.maxLength(50)]],
@@ -22,10 +21,10 @@ export class RegisterComponent {
       repetirContrasena: ['', [Validators.required]],
       aceptacionConsentimiento: [false, [Validators.requiredTrue]]
     });
-   }
+  }
 
   ngOnInit(): void {
-   
+
   }
 
   // Método para validar complejidad de contraseña
@@ -43,7 +42,17 @@ export class RegisterComponent {
 
   // Método para mostrar cláusulas de aceptación
   mostrarClausulas() {
-    // Lógica para mostrar las cláusulas de aceptación
+    const dialogRef = this.dialog.open(TerminosCondicionesDialogComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+      if (result) {
+        const aceptacionControl = this.registroForm.get('aceptacionConsentimiento');
+        if (aceptacionControl) {
+          aceptacionControl.setValue(true);
+        }
+      }
+    });
   }
 
   // Método para enviar el formulario
@@ -51,6 +60,8 @@ export class RegisterComponent {
     if (this.registroForm.valid) {
       // Lógica para enviar los datos a la base de datos
       console.log(this.registroForm.value);
+    } else{
+      console.log('FORMULARIO INVALIDO');
     }
   }
 }

@@ -5,11 +5,8 @@ import { map, shareReplay } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../auth/services/auth.service';
 import { UserSession } from '../../interfaces/usersession';
-import { CommonService } from 'src/app/shared/common.service';
 import { PermissionsEnum } from '../../enums/permissions.enum';
 import { PermissionsService } from '../../services/permissions.service';
-import { ModulesEnum } from '../../enums/modules.enum';
-import { SectionsEnum } from '../../enums/sections.enum';
 
 @Component({
   selector: 'app-menu',
@@ -64,17 +61,18 @@ export class MenuComponent implements OnInit {
   reenviarPorEmailDocumentosEmpresasEmitidos: boolean = false;
 
   //Reportes
-  reporte1: boolean = false;
-  reporte2: boolean = false;
+  reporteEmitidosPorAnio: boolean = false;
+  reporteRecibidosPorAnio: boolean = false;
+  reporteDocumentosNotificados: boolean = false;
 
 
-  //MODULOS
+  //***************MODULOS**************/
   configuracionesModule: boolean = false;
   misDocumentosModule: boolean = false;
   documentosEmpresaModule: boolean = false;
   reportesModule: boolean = false;
 
-  //SECCIONES
+  //***************SECCIONES************/
   generalSection: boolean = false;
   empresaSection: boolean = false;
   usuarioSection: boolean = false;
@@ -84,8 +82,10 @@ export class MenuComponent implements OnInit {
   docEmpresaRecibidosSection: boolean = false;
   docEmpresaEmitidosSection: boolean = false;
 
-  reportes1Section: boolean = false;
-  reportes2Section: boolean = false;
+  reporteEmitidosPorAnioSection: boolean = false;
+  reporteRecibidosPorAnioSection: boolean = false;
+  reporteDocumentosNotificadosSection: boolean = false;
+
 
 
 
@@ -122,8 +122,9 @@ export class MenuComponent implements OnInit {
     this.descargarDocumentosEmpresasEmitidos = this.hasPermission(PermissionsEnum.DescargarDocumentosEmpresasEmitidos);
     this.reenviarPorEmailDocumentosEmpresasEmitidos = this.hasPermission(PermissionsEnum.ReenviarPorEmailDocumentosEmpresasEmitidos);
 
-    this.reporte1 = this.hasPermission(PermissionsEnum.Reporte1);
-    this.reporte2 = this.hasPermission(PermissionsEnum.Reporte2);
+    this.reporteEmitidosPorAnio = this.hasPermission(PermissionsEnum.ReportePorAñoDocumentosEmitidosEmpresa);
+    this.reporteRecibidosPorAnio = this.hasPermission(PermissionsEnum.ReportePorAñoDocumentosRecibidosEmpresa);
+    this.reporteDocumentosNotificados = this.hasPermission(PermissionsEnum.ReporteDocumentosNotificadosPorEmail);
     //#endregion
 
     //#region SECCIONES
@@ -137,8 +138,9 @@ export class MenuComponent implements OnInit {
     this.docEmpresaRecibidosSection = this.visualizarDocumentosEmpresasRecibidos || this.descargarDocumentosEmpresasRecibidos || this.enviarPorEmailDocumentosEmpresasRecibidos;
     this.docEmpresaEmitidosSection = this.visualizarDocumentosEmpresasEmitidos || this.descargarDocumentosEmpresasEmitidos || this.reenviarPorEmailDocumentosEmpresasEmitidos;
 
-    this.reportes1Section = this.reporte1;
-    this.reportes2Section = this.reporte2;
+    this.reporteEmitidosPorAnioSection = this.reporteEmitidosPorAnio;
+    this.reporteRecibidosPorAnioSection = this.reporteRecibidosPorAnio;
+    this.reporteDocumentosNotificadosSection = this.reporteDocumentosNotificados;
 
     //#endregion
 
@@ -146,7 +148,7 @@ export class MenuComponent implements OnInit {
     this.configuracionesModule = this.generalSection || this.empresaSection || this.usuarioSection || this.rolesSection;
     this.misDocumentosModule = this.misDocRecibidosSection;
     this.documentosEmpresaModule = this.docEmpresaEmitidosSection || this.docEmpresaRecibidosSection;
-    this.reportesModule = this.reportes1Section || this.reportes2Section;
+    this.reportesModule = this.reporteEmitidosPorAnioSection || this.reporteRecibidosPorAnioSection || this.reporteDocumentosNotificadosSection;
     //#endregion
 
 
@@ -167,7 +169,6 @@ export class MenuComponent implements OnInit {
     this.authService.getUserSession().subscribe(
       (data) => {
         this._userSession = data;
-        console.log(this._userSession);
       },
       (error) => {
         console.error('Error fetching data:', error);
@@ -232,12 +233,16 @@ export class MenuComponent implements OnInit {
 
   PATH_Reportes = {
     Recibidos: {
-      name: 'Recibidos',
-      path: './' + this.Modulos.Reportes + 'recibidos/'
+      name: 'Recibidos Empresa por Año',
+      path: './' + this.Modulos.Reportes + 'empresarecibidos/'
     },
     Emitidos: {
-      name: 'Emitidos',
-      path: './' + this.Modulos.Reportes + 'emitidos/'
+      name: 'Emitidos Empresa por Año',
+      path: './' + this.Modulos.Reportes + 'empresaemitidos/'
+    },
+    Email: {
+      name: 'Documentos Notificados',
+      path: './' + this.Modulos.Reportes + 'email/'
     }
   }
 }

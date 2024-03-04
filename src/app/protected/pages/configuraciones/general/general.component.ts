@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/auth/services/auth.service';
 import { SMTPSecurityTypeEnum } from 'src/app/protected/enums/SMTPSecurityType.enum';
 import { ViewParameters } from 'src/app/protected/interfaces/parameter';
+import { UserSession } from 'src/app/protected/interfaces/usersession';
 import { ParametrosService } from 'src/app/protected/services/parametros.service';
 import { CommonService } from 'src/app/shared/common.service';
 
@@ -23,15 +26,21 @@ export class GeneralComponent implements OnInit {
   selectedSecurityType: SMTPSecurityTypeEnum | undefined;
   loading: boolean = false;
 
+  // User session data
+  _userSession!: UserSession;
+
   constructor(private parametrosService: ParametrosService,
-    public commonService: CommonService) { }
+    public commonService: CommonService,
+    private authService: AuthService,
+    private router: Router) { }
 
   ngOnInit(): void {
-
-    
-    // Puedes cargar los parámetros existentes al iniciar el componente si es necesario
-    this.loadParametros();
-
+    this.getUserSession();
+    if (this._userSession.IdRol === "1") {
+      this.loadParametros();
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   loadParametros() {
@@ -75,5 +84,17 @@ export class GeneralComponent implements OnInit {
   onSecurityTypeSelected(securityType: number) {
     this.selectedSecurityType = securityType;
     this.parametros.type_security = securityType;
+  }
+
+  getUserSession() {
+    this.authService.getUserSession().subscribe(
+      (data) => {
+        this._userSession = data;
+        console.log(this._userSession);
+      },
+      (error) => {
+        console.error('Error fetching data:', error);
+      }
+    );
   }
 }

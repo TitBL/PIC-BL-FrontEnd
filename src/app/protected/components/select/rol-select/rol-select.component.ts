@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { EstadosEnum } from 'src/app/protected/enums/estados.enum';
 import { Rol } from 'src/app/protected/interfaces/rol';
 import { RolService } from 'src/app/protected/services/rol.service';
@@ -8,7 +8,7 @@ import { RolService } from 'src/app/protected/services/rol.service';
   templateUrl: './rol-select.component.html',
   styleUrls: ['./rol-select.component.css']
 })
-export class RolSelectComponent {
+export class RolSelectComponent implements OnInit {
   rolesList: Rol[] = [];
 
   constructor(private rolService: RolService) { }
@@ -23,9 +23,7 @@ export class RolSelectComponent {
     // Cargar roles adicionales desde el servicio
     this.loadRolesList(EstadosEnum.Activo);
     //this.selectedRol = this.rolesList[0].id;
-    if (this.preselectedRol !== undefined) {
-      this.selectedRol = this.preselectedRol;
-    }
+   
   }
 
   loadRolesList(_state: string) {
@@ -35,11 +33,12 @@ export class RolSelectComponent {
         if (ok.Success === true) {
           // Concatenar los roles obtenidos del servicio con los roles por defecto
           this.rolesList = this.rolesList.concat(ok.Data);
+          if (this.preselectedRol !== undefined) {
+            this.selectedRol = this.preselectedRol;
+          }
         }
       });
   }
-
-
 
   selectedRol: number | undefined;
 

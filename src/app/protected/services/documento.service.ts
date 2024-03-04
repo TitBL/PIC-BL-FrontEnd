@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, catchError, map, tap } from 'rxjs';
 import { Response } from '../interfaces/response';
 import { ViewDocumentIssued, ViewDocumentReceived } from '../interfaces/documento';
 import { ApiRoutes } from 'src/app/shared/api-routes';
@@ -47,13 +47,10 @@ export class DocumentoService {
     const headers = this.commonService.createHeaders();
 
     return this.http.post<Response>(url, body, { headers })
-      .pipe(
-        tap(resp => {
-          if (resp.Success) {
-            this._documentsReceived = resp.Data;
-          }
-        })
-      );
+    .pipe(
+      tap(resp => {return resp}),
+      catchError(this.commonService.handleError)
+    );
   }
 
 
@@ -72,13 +69,10 @@ export class DocumentoService {
     const headers = this.commonService.createHeaders();
 
     return this.http.post<Response>(url, body, { headers })
-      .pipe(
-        tap(resp => {
-          if (resp.Success) {
-            this._documentsReceived = resp.Data;
-          }
-        })
-      );
+    .pipe(
+      tap(resp => {return resp}),
+      catchError(this.commonService.handleError)
+    );
   }
 
 
@@ -97,28 +91,12 @@ export class DocumentoService {
     const headers = this.commonService.createHeaders();
 
     return this.http.post<Response>(url, body, { headers })
-      .pipe(
-        tap(resp => {
-          if (resp.Success) {
-            this._documentsIssued = resp.Data;
-          }
-        }),map(documents => documents.Data.map(this.mapToViewDocument))
-      );
+    .pipe(
+      tap(resp => {return resp}),
+      catchError(this.commonService.handleError)
+    );
   }
 
-  private mapToViewDocument(document: any): ViewDocumentIssued {
-    return {
-      Anio: document.Anio,
-      Mes: document.Mes,
-      Dia: document.Dia,
-      FechaDocumento: document['Fecha Documento'],
-      FechayHoraAutorizacion: document['Fecha y Hora Autorizacion'],
-      Receptor: document.Receptor,
-      TipoDocumento: document['Tipo Documento'],
-      Documento: document.Documento,
-      ClaveAcceso: document['Clave Acceso']
-    };
-  }
 
   downloadPDF(Id: string): Observable<any> {
     const url = `${ApiRoutes.Document.Download_PDF}/${Id}`;

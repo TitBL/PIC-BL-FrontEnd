@@ -7,12 +7,7 @@ import { SMTPSecurityTypeEnum } from '../../../enums/SMTPSecurityType.enum';
   styleUrls: ['./smtpsecurity-type-select.component.css']
 })
 export class SMTPSecurityTypeSelectComponent implements OnInit{
-  securityTypes = Object.keys(SMTPSecurityTypeEnum)
-    .filter(key => isNaN(Number(SMTPSecurityTypeEnum[key as keyof typeof SMTPSecurityTypeEnum])))
-    .map(key => ({
-      name: key,
-      value: SMTPSecurityTypeEnum[key as keyof typeof SMTPSecurityTypeEnum],
-    }));
+  securityTypes: { name: string; value: SMTPSecurityTypeEnum; }[] | undefined;
 
   selectedSecurityType: number | undefined;
 
@@ -28,6 +23,13 @@ export class SMTPSecurityTypeSelectComponent implements OnInit{
   }
 
   ngOnInit() {
+    this.securityTypes = Object.keys(SMTPSecurityTypeEnum)
+    .filter(key => isNaN(Number(SMTPSecurityTypeEnum[key as keyof typeof SMTPSecurityTypeEnum])))
+    .map(key => ({
+      name: key,
+      value: SMTPSecurityTypeEnum[key as keyof typeof SMTPSecurityTypeEnum],
+    }));
+
     // Verifica si hay un valor preseleccionado y establece selectedSecurityType
     if (this.preselectedType !== undefined) {
       this.selectedSecurityType = this.preselectedType;

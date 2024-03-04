@@ -7,6 +7,9 @@ import { MatSort } from '@angular/material/sort';
 import { DialogTemplateComponent } from 'src/app/protected/components/dialog-template/dialog-template.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CommonService } from 'src/app/shared/common.service';
+import { UserSession } from 'src/app/protected/interfaces/usersession';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Component({
   selector: 'app-rol',
@@ -28,19 +31,26 @@ export class RolComponent implements OnInit, AfterViewInit {
   filterValue: string = '';
   isNew: boolean = true;
   idRol: number = -1;
-
+  // User session data
+  _userSession!: UserSession;
 
   constructor(private rolService: RolService,
     private dialog: MatDialog,
-    public commonService: CommonService) { }
+    public commonService: CommonService,
+    private router: Router,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
-    
-    this.getRolesList(this.selected);
-     // Suscribirse al evento de guardado de rol
-     this.rolService.onRolSaved().subscribe(() => {
-      this.getRolesList(this.selected); // Recargar los datos de la tabla
-    });
+    this.getUserSession();
+    if (this._userSession.IdRol === "1") {
+      this.getRolesList(this.selected);
+      // Suscribirse al evento de guardado de rol
+      this.rolService.onRolSaved().subscribe(() => {
+        this.getRolesList(this.selected); // Recargar los datos de la tabla
+      });
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -50,8 +60,8 @@ export class RolComponent implements OnInit, AfterViewInit {
   }
 
   getRolesList(_state: string) {
-       // Bloquear la pantalla
-       this.loading = true;
+    // Bloquear la pantalla
+    this.loading = true;
     this.rolService.getRolesByState(_state)
       .subscribe(ok => {
         console.log('RESPONSE DATA: ', ok);
@@ -65,11 +75,11 @@ export class RolComponent implements OnInit, AfterViewInit {
   }
   applyFilter() {
     // Convertir la cadena de filtro a minúsculas para hacer una comparación sin distinción entre mayúsculas y minúsculas
-  const lowerCaseFilter = this.filterValue.trim().toLowerCase();
-  // Aplicar el filtro a la fuente de datos
-  this.dataSource.filter = lowerCaseFilter;
-}
-  
+    const lowerCaseFilter = this.filterValue.trim().toLowerCase();
+    // Aplicar el filtro a la fuente de datos
+    this.dataSource.filter = lowerCaseFilter;
+  }
+
   /**
   * Handles the change event of the state dropdown and retrieves the filtered business list.
   * @param event The change event object.
@@ -89,7 +99,7 @@ export class RolComponent implements OnInit, AfterViewInit {
       disableClose: true,
     });
 
-    dialogRef.componentInstance.setTitle(_enable? 'Habilitar ': 'Deshabilitar '+`${_rol.Nombre}`);
+    dialogRef.componentInstance.setTitle(_enable ? 'Habilitar ' : 'Deshabilitar ' + `${_rol.Nombre}`);
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
@@ -109,5 +119,17 @@ export class RolComponent implements OnInit, AfterViewInit {
         });
       }
     });
+  }
+
+  getUserSession() {
+    this.authService.getUserSession().subscribe(
+      (data) => {
+        this._userSession = data;
+        console.log(this._userSession);
+      },
+      (error) => {
+        console.error('Error fetching data:', error);
+      }
+    );
   }
 }

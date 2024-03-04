@@ -6,6 +6,7 @@ const baseDocument: string = '/documento';
 const baseBusiness: string = '/empresa';
 const baseRole: string = '/rol';
 const baseUser: string = '/usuario';
+const baseReport: string = '/reporte';
 
 /**
  * API Routes for different modules.
@@ -25,6 +26,7 @@ export const ApiRoutes = {
      */
         Get_Setup: `${environment.baseUrl + baseSetup}`,
         Update_Settings: `${environment.baseUrl+ baseSetup}`,
+        Get_TermsConditions : `${environment.baseUrl+ baseSetup}/terms`,
     },
 
     Document : {
@@ -78,6 +80,7 @@ export const ApiRoutes = {
      */
         Get_byState: `${environment.baseUrl + baseUser}/list`,
         Get_Profile: `${environment.baseUrl + baseUser}/perfil`,
+        Get_Profile_Dash: `${environment.baseUrl + baseUser}/perfil/dash`,
         Get_bySearch: `${environment.baseUrl + baseUser}/buscar`,
         Get_byId: `${environment.baseUrl + baseUser}`,
         Update : `${environment.baseUrl + baseUser}`,
@@ -86,5 +89,15 @@ export const ApiRoutes = {
         Disable : `${environment.baseUrl + baseUser}/deshabilitar`,
         Enable : `${environment.baseUrl + baseUser}/habilitar`,
         ResetPassword : `${environment.baseUrl + baseUser}/resetpwd`,
-    }
+    },
+    Report : {
+        /**
+    * User-related endpoints.
+    */
+       Get_DocReceived_Business: `${environment.baseUrl + baseReport}/his/docs/empresa/recibidos`,
+       Get_DocIssued_Business: `${environment.baseUrl + baseReport}/his/docs/empresa/emitidos`,
+       Get_Business_Panel: `${environment.baseUrl + baseReport}/dash`,
+   },
+
+
 };

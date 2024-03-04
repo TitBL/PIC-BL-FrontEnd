@@ -28,7 +28,10 @@ export enum PermissionsEnum {
   DescargarDocumentosEmpresasEmitidos = 30202,
   ReenviarPorEmailDocumentosEmpresasEmitidos = 30203,
 
-  // Reportes
-  Reporte1 = 40101,
-  Reporte2 = 40201,
+  // Reportes - Empresa
+  ReportePorAñoDocumentosRecibidosEmpresa = 40101,
+  ReportePorAñoDocumentosEmitidosEmpresa = 40102,
+
+  //Reportes - Email
+  ReporteDocumentosNotificadosPorEmail = 40103
 }

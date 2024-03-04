@@ -37,8 +37,8 @@ export class EmitidosEmpresaComponent implements OnInit, AfterViewInit {
   descargarDocumentos: boolean = true;
   reenviarDocumentos: boolean = true;
 
-  selectedDocumentType: string | undefined;
-  selectedBusiness: number = 0;
+  selectedDocumentType: string = 'Factura';
+  selectedBusiness: number = -1;
   filterValue: string = '';
   loading: boolean = false;
 
@@ -46,7 +46,8 @@ export class EmitidosEmpresaComponent implements OnInit, AfterViewInit {
     private permissionsService: PermissionsService,
     private commonService: CommonService,
     private dialog: MatDialog,
-    private router: Router) { }
+    private router: Router) {
+  }
 
   /**
   * Initializes the component and retrieves the list of issued documents for the business.
@@ -83,7 +84,7 @@ export class EmitidosEmpresaComponent implements OnInit, AfterViewInit {
     this.documentoService.getDocumentIssuedBusiness(_idEmpresa, _fechaDesde, _fechaHasta)
       .subscribe(ok => {
         if (ok !== undefined) {
-          this.dataSource.data = ok;
+          this.dataSource.data = ok.Data;
           this.applyFilter();
         } else {
           this.commonService.notifyErrorResponse('Ha ocurrido un error en la consulta');
@@ -140,7 +141,6 @@ export class EmitidosEmpresaComponent implements OnInit, AfterViewInit {
     this.loading = true;
     this.documentoService.forwardDocumentMail(_claveAcceso, _email_copia)
       .subscribe((response: any) => {
-        console.log(response);
         this.commonService.notifySuccessResponse(response.Data['message']);
       },
         (error) => {
@@ -178,17 +178,18 @@ export class EmitidosEmpresaComponent implements OnInit, AfterViewInit {
     // Utiliza las fechas seleccionadas en lugar de las fechas fijas
     const fechaDesde = this.fechaDesde ? this.fechaDesde.toISOString().split('T')[0] : '';
     const fechaHasta = this.fechaHasta ? this.fechaHasta.toISOString().split('T')[0] : '';
-
     // Llama a la función que carga los documentos con las fechas seleccionadas
     this.getDocumentIssuedBusinessList(this.selectedBusiness, fechaDesde, fechaHasta);
   }
 
 
   applyFilter() {
-    // Convertir la cadena de filtro a minúsculas para hacer una comparación sin distinción entre mayúsculas y minúsculas
     const lowerCaseFilter = this.filterValue.trim().toLowerCase();
-    // Aplicar el filtro a la fuente de datos
     this.dataSource.filter = lowerCaseFilter;
+    // También aplicamos el filtro por tipo de documento
+    if (this.selectedDocumentType !== 'Todos') {
+      this.dataSource.filter = lowerCaseFilter + ' ' + this.selectedDocumentType.trim().toLowerCase();
+    }
   }
 
   /**
@@ -202,17 +203,16 @@ export class EmitidosEmpresaComponent implements OnInit, AfterViewInit {
 
   onDocumentTypeSelected(documentType: string) {
     this.selectedDocumentType = documentType;
-    // Convertir la cadena de filtro a minúsculas para hacer una comparación sin distinción entre mayúsculas y minúsculas
     const lowerCaseFilter = documentType.trim().toLowerCase();
-    // Aplicar el filtro a la fuente de datos
     this.dataSource.filter = lowerCaseFilter;
+    this.applyFilter();
   }
 
   onEmpresaSelected(empresa: number) {
-    console.log(empresa);
-    this.selectedBusiness = empresa;
-    this.searchDocuments();
+    if (empresa) {
+      this.selectedBusiness = empresa;
+      this.searchDocuments();
+    }
   }
-
 
 }

@@ -1,0 +1,81 @@
+<div class="row">
+    <div class="col-md-5 col-12">
+        <app-empresa-select (businessSelected)="onEmpresaSelected($event)"></app-empresa-select>
+    </div>
+    <div class="col-md-3 col-6">
+        <mat-form-field style="width: 100%;">
+            <mat-label>Mes</mat-label>
+            <mat-select [(ngModel)]="selectedMonth">
+                <mat-option *ngFor="let month of months" [value]="month.id">{{ month.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="col-md-3 col-5">
+        <mat-form-field style="width: 100%;">
+            <mat-label>Año</mat-label>
+            <mat-select [(ngModel)]="selectedYear">
+                <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="col-md-1 col-1">
+        <button mat-icon-button color="primary" (click)="search()" matTooltip="Buscar">
+            <mat-icon fontIcon="search"></mat-icon></button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-12">
+        <div class="col-12  d-flex justify-content-center mb-3" style="background-color: white;">
+            <app-pie-chart id="pie-chart-recibidos" title="Documentos Recibidos" [data]="dataSourceRecibidos"
+                *ngIf="dataSourceRecibidos"></app-pie-chart>
+        </div>
+        <div class="col-12">
+            <table mat-table [dataSource]="dataSourceTableRecibidos" class="mat-elevation-z8 responsive-table"
+                *ngIf="!isDataSourceRecEmpty">
+                <ng-container matColumnDef="TipoDocumento">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Tipo de Documento </th>
+                    <td mat-cell *matCellDef="let viewReporte" class="text-center" style="height: fit-content;">
+                        {{viewReporte[0]}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Transacciones">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Transacciones</th>
+                    <td mat-cell *matCellDef="let viewReporte" class="text-center" style="height: fit-content;">
+                        {{viewReporte[1]}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6 col-12 mt-5 mt-md-0">
+        <div class="col-12 d-flex justify-content-center mb-3" style="background-color: white;">
+            <app-pie-chart id="pie-chart-enviador" title="Documentos Enviados" [data]="dataSourceEnviados"
+                *ngIf="dataSourceEnviados"></app-pie-chart>
+        </div>
+        <div class="col-12">
+            <table mat-table [dataSource]="dataSourceTableEnviados" class="mat-elevation-z8 responsive-table"
+                *ngIf="!isDataSourceEnvEmpty">
+                <ng-container matColumnDef="TipoDocumento">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Tipo de Documento </th>
+                    <td mat-cell *matCellDef="let viewReporte" class="text-center" style="height: fit-content;">
+                        {{viewReporte[0]}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Transacciones">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Transacciones</th>
+                    <td mat-cell *matCellDef="let viewReporte" class="text-center" style="height: fit-content;">
+                        {{viewReporte[1]}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+
+<app-spinner [loading]="loading"></app-spinner>

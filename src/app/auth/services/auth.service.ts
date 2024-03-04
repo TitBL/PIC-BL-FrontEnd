@@ -173,8 +173,6 @@ export class AuthService {
 
     // Concatenar el número de RUC con la fecha actual en el formato deseado
     const rucConFecha = `${ruc}${año}${mesFormateado}${diaFormateado}`;
-    console.log('STRING: ', rucConFecha);
-    console.log('STRING ENCRIPTADO: ', this.cryptoService.encrypt(rucConFecha));
     return this.cryptoService.encrypt(rucConFecha);
   }
 

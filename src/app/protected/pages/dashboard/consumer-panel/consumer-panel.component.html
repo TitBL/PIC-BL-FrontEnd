@@ -1,0 +1,57 @@
+<div class="row" *ngIf="!isDataSourceRecEmpty">
+    <h2>PANEL DE CLIENTES</h2>
+    <div class="col-12">
+        <app-line-chart title="Reporte de Documentos" subtitle="Por cantidad de transacciones diarias"
+            [data]="dataSourceRecibidos" *ngIf="dataSourceRecibidos"></app-line-chart>
+    </div>
+
+    <div class="col-12">
+        <table mat-table [dataSource]="dataSourceTableRecibidos" class="mat-elevation-z8 responsive-table"
+            *ngIf="!isDataSourceRecEmpty">
+            <ng-container matColumnDef="Emisor">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Emisor</th>
+                <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.document_issuer}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="Numero">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Número Documento</th>
+                <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.document_number}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="Tipo">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Tipo Documento</th>
+                <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.document_type}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="Fecha">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Fecha Documento</th>
+                <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.emission_date}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="ClaveAcceso">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Clave de Acceso</th>
+                <td mat-cell *matCellDef="let viewReporte" class="text-center"> {{viewReporte.key_access_sri}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="Funciones">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Funciones</th>
+                <td mat-cell *matCellDef="let viewReporte" class="text-center">
+                    <button mat-icon-button (click)="openPdfModal(viewReporte.key_access_sri)" color="primary"
+                        *ngIf="visualizarDocumentos" matTooltip="Visualizar PDF">
+                        <mat-icon fontIcon="preview"></mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="downloadPDF(viewReporte.key_access_sri)" color="warn"
+                        *ngIf="descargarDocumentos" matTooltip="Descargar PDF">
+                        <mat-icon fontIcon="picture_as_pdf"></mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+    <hr>
+</div>
+
+<app-spinner [loading]="loading"></app-spinner>

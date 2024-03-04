@@ -25,6 +25,12 @@ import { EstadoSelectComponent } from './components/select/estado-select/estado-
 import { PieChartComponent } from './components/pie-chart/pie-chart.component';
 import { EditRolModalComponent } from './pages/configuraciones/rol/edit-rol-modal/edit-rol-modal.component';
 import { RolSelectComponent } from './components/select/rol-select/rol-select.component';
+import { ReporteEmitidosPorAnioComponent } from './pages/reportes/empresa/reporte-emitidos-por-anio/reporte-emitidos-por-anio.component';
+import { ReporteRecibidosPorAnioComponent } from './pages/reportes/empresa/reporte-recibidos-por-anio/reporte-recibidos-por-anio.component';
+import { ReporteDocumentosNotificadosComponent } from './pages/reportes/email/reporte-documentos-notificados/reporte-documentos-notificados.component';
+import { LineChartComponent } from './components/line-chart/line-chart.component';
+import { BusinessPanelComponent } from './pages/dashboard/business-panel/business-panel.component';
+import { ConsumerPanelComponent } from './pages/dashboard/consumer-panel/consumer-panel.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +56,12 @@ import { RolSelectComponent } from './components/select/rol-select/rol-select.co
     PieChartComponent,
     EditRolModalComponent,
     RolSelectComponent,
+    ReporteEmitidosPorAnioComponent,
+    ReporteRecibidosPorAnioComponent,
+    ReporteDocumentosNotificadosComponent,
+    LineChartComponent,
+    BusinessPanelComponent,
+    ConsumerPanelComponent
   ],
   imports: [
     CommonModule,

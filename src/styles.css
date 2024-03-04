@@ -1,4 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+* {
+  font-size: small;
+  /* font-family: Poppins, Helvetica, sans-serif; */
+}
 
 html,
 body {
@@ -8,7 +12,7 @@ body {
 body {
   margin: 0;
   /* font-family: Roboto, "Helvetica Neue", sans-serif; */
-  font-family: Poppins, Helvetica, sans-serif;
+
 }
 
 .main-content {
@@ -48,12 +52,17 @@ body {
 }
 
 .btn_success {
-background-color: #078503;
-color: white;
+  background-color: #078503;
+  color: white;
 }
 
 @media (max-width: 600px) {
-.responsive-table {
-  display: block;
-}
+  * {
+    font-size: x-small;
+    /* font-family: Poppins, Helvetica, sans-serif; */
+  }
+
+  .responsive-table {
+    display: block;
+  }
 }
